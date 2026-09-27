@@ -1,0 +1,87 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.25.0",
+    "script_metadata_hash": "cdac4f193ea60f385129ed849f93ec6c"
+  },
+  "cells": [
+    {
+      "id": "setup",
+      "code_hash": "dbf98b8a2d0332bcec38401f203a0965",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "mAXe",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "unnT",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "CGTP",
+      "code_hash": "9f4dc8854b36ce19c148885108f99a5e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "zAAu",
+      "code_hash": "7eb2087c5125b3d66c7fc09af3323ed6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Turmas: ['7\u00baA', '7\u00baB']\nDias letivos: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex']\nPer\u00edodos por dia: [1, 2, 3, 4, 5]\nTotal de exce\u00e7\u00f5es de professores: 15\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "ouwu",
+      "code_hash": "23dc90943700d314370a7112027b4fe2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Total de vari\u00e1veis booleanas x criadas: 300\nR1 adicionado com sucesso ao modelo!\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    }
+  ]
+}
