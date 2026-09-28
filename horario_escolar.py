@@ -9,110 +9,128 @@ __generated_with = "0.25.0"
 app = marimo.App(width="medium")
 
 
-app._unparsable_cell(
-    r"""
+@app.cell
+def _(mo):
+    mo.md(r"""
     # Trabalho Prático: Gerador de Horário Escolar
 
     ## 1. Introdução
-    Este trabalho tem como objetivo a conceção e implementação de um sistema automático para geração de horários escolares semanais. O problema é formulado como um **Problema de Satisfação de Restrições (CSP)** e otimização inteira, utilizando a biblioteca **Google OR-Tools (CP-SAT)** e **pandas** para a manipulação dos dados de entrada.
+    Este trabalho tem como objetivo a conceção e implementação de um sistema automático para geração de horários escolares semanais. O problema é formulado como um **Problema de Satisfação de Restrições (CSP)** e otimização inteira, utilizando a biblioteca **Google OR-Tools (CP-SAT)**.
+
+    Para a manipulação dos dados de entrada, optou-se por utilizar o módulo nativo **`csv`** da biblioteca standard de Python (em vez de `pandas`), garantindo maior leveza, ausência de dependências externas e uma conversão direta para as estruturas nativas (listas e dicionários) que o solver manipula com facilidade.
 
     O sistema responde aos seguintes eixos principais:
     1. Respeito integral por todos os requisitos operacionais (**R1 a R8**).
     2. Minimização dos tempos mortos ("buracos") nos horários dos professores (**O1**).
     3. Capacidade de adaptação incremental estável face a alterações de recursos (**R9**).
-    """,
-    name="setup"
-)
+    """)
+    return
 
 
 @app.cell
 def _():
     import marimo as mo
-    import pandas as pd
     import time
     import os
 
     from ortools.sat.python import cp_model
 
-    return cp_model, os, pd
-
-
-app._unparsable_cell(
-    r"""
-    ## 2. Leitura e Preparação dos Dados (R8)
-    Os dados de entrada são lidos diretamente de ficheiros CSV (`turmas.csv`, `disciplinas.csv`, `salas.csv` e `disponibilidade_excecoes.csv`), garantindo a total ausência de dados fixos (*hardcoded*) no código.
-
-    A semana letiva é composta por 5 dias (`Seg` a `Sex`), com 5 tempos letivos diários (períodos 1 a 5).
-    """,
-    name="_"
-)
+    return cp_model, mo
 
 
 @app.cell
-def _(os, pd):
+def _(mo):
+    mo.md(r"""
+    ## 2. Leitura e Preparação dos Dados (R8)
+    Os dados de entrada são lidos diretamente dos ficheiros CSV (`turmas.csv`, `disciplinas.csv`, `salas.csv` e `disponibilidade_excecoes.csv`), garantindo a total ausência de dados fixos (*hardcoded*) no código.
 
-    # Definição do espaço temporal do horário escolar
+    A leitura é dividida em duas funções:
+    - **`ler_csv_validado`**: Uma função utilitária e genérica que abre qualquer CSV com `csv.DictReader`, valida se os cabeçalhos obrigatórios existem e devolve o texto limpo.
+    - **`carregar_dados`**: Orquestra o carregamento dos quatro ficheiros e converte os valores em tipos nativos de Python (inteiros para a carga horária e capacidades, booleanos para duplos períodos, etc.).
+
+    A semana letiva é composta por 5 dias (`Seg` a `Sex`), com 5 tempos letivos diários (períodos 1 a 5).
+    """)
+    return
+
+
+@app.cell
+def _():
+    import csv
+    import os
+
     DIAS_SEMANA = ["Seg", "Ter", "Qua", "Qui", "Sex"]
     PERIODOS_DIA = [1, 2, 3, 4, 5]
 
+    def ler_csv_validado(caminho, colunas_obrigatorias):
+        """Lê um CSV e valida as colunas obrigatórias."""
+        if not os.path.exists(caminho):
+            raise FileNotFoundError(f"Ficheiro não encontrado: {caminho}")
 
-    def carregar_dados_horario(pasta="dados"):
-        """Lê os ficheiros CSV de uma diretoria, normaliza campos de texto
+        with open(caminho, mode="r", encoding="utf-8") as f:
+            leitor = csv.DictReader(f)
+            colunas_reais = set(col.strip() for col in (leitor.fieldnames or []))
+            em_falta = set(colunas_obrigatorias) - colunas_reais
+            if em_falta:
+                raise ValueError(f"Ficheiro {caminho} inválido: faltam as colunas {em_falta}")
 
-        e valida a coerência temporal com os dias e períodos definidos.
-        """
-        caminho = lambda nome: os.path.join(pasta, nome)
+            return [{k.strip(): (v.strip() if v else "") for k, v in row.items()} for row in leitor]
 
-        # 1. Carregamento dos ficheiros CSV
-        df_turmas = pd.read_csv(caminho("turmas.csv"))
-        df_disciplinas = pd.read_csv(caminho("disciplinas.csv"))
-        df_salas = pd.read_csv(caminho("salas.csv"))
-        df_excecoes = pd.read_csv(caminho("disponibilidade_excecoes.csv"))
-
-        # 2. Limpeza e normalização de dados de texto
-        df_disciplinas["disciplina"] = df_disciplinas["disciplina"].astype(str).str.strip()
-        df_disciplinas["professor"] = df_disciplinas["professor"].astype(str).str.strip()
-        df_disciplinas["duplo_periodo"] = (
-            df_disciplinas["duplo_periodo"].astype(str).str.strip().str.lower()
+    def carregar_dados(pasta="dados"):
+        """Carrega e tipifica os dados do problema a partir da pasta indicada."""
+        turmas_raw = ler_csv_validado(os.path.join(pasta, "turmas.csv"), ["turma"])
+        disciplinas_raw = ler_csv_validado(
+            os.path.join(pasta, "disciplinas.csv"),
+            ["disciplina", "professor", "carga_semanal", "duplo_periodo", "sala_especial"],
         )
-        df_disciplinas["sala_especial"] = (
-            df_disciplinas["sala_especial"].fillna("").astype(str).str.strip()
+        salas_raw = ler_csv_validado(os.path.join(pasta, "salas.csv"), ["sala", "tipo", "quantidade"])
+        excecoes_raw = ler_csv_validado(
+            os.path.join(pasta, "disponibilidade_excecoes.csv"),
+            ["professor", "dia", "periodo"],
         )
 
-        df_salas["sala"] = df_salas["sala"].astype(str).str.strip()
-        df_salas["tipo"] = df_salas["tipo"].astype(str).str.strip().str.lower()
+        turmas = [r["turma"] for r in turmas_raw]
 
-        df_excecoes["professor"] = df_excecoes["professor"].astype(str).str.strip()
-        df_excecoes["dia"] = df_excecoes["dia"].astype(str).str.strip()
-        df_excecoes["periodo"] = df_excecoes["periodo"].astype(int)
+        disciplinas = [
+            {
+                "disciplina": r["disciplina"],
+                "professor": r["professor"],
+                "carga_semanal": int(r["carga_semanal"]),
+                "duplo_periodo": r["duplo_periodo"].lower() == "sim",
+                "sala_especial": r["sala_especial"] if r["sala_especial"] != "" else None,
+            }
+            for r in disciplinas_raw
+        ]
 
-        # 3. Filtragem de segurança: garantir que as exceções pertencem aos dias e períodos válidos
-        df_excecoes = df_excecoes[
-            df_excecoes["dia"].isin(DIAS_SEMANA)
-            & df_excecoes["periodo"].isin(PERIODOS_DIA)
+        salas = [
+            {
+                "sala": r["sala"],
+                "tipo": r["tipo"].lower(),
+                "quantidade": int(r["quantidade"]),
+            }
+            for r in salas_raw
+        ]
+
+        # Filtra exceções para garantir que pertencem ao calendário válido
+        excecoes = [
+            {
+                "professor": r["professor"],
+                "dia": r["dia"],
+                "periodo": int(r["periodo"]),
+            }
+            for r in excecoes_raw
+            if r["dia"] in DIAS_SEMANA and int(r["periodo"]) in PERIODOS_DIA
         ]
 
         return {
-            "turmas": df_turmas,
-            "disciplinas": df_disciplinas,
-            "salas": df_salas,
-            "excecoes": df_excecoes,
+            "turmas": turmas,
+            "disciplinas": disciplinas,
+            "salas": salas,
+            "excecoes": excecoes,
             "dias": DIAS_SEMANA,
             "periodos": PERIODOS_DIA,
         }
 
-    return (carregar_dados_horario,)
-
-
-@app.cell
-def _(carregar_dados_horario):
-    dados_h0 = carregar_dados_horario("dados")
-
-    print("Turmas:", dados_h0["turmas"]["turma"].tolist())
-    print("Dias letivos:", dados_h0["dias"])
-    print("Períodos por dia:", dados_h0["periodos"])
-    print("Total de exceções de professores:", len(dados_h0["excecoes"]))
-    return (dados_h0,)
+    return
 
 
 @app.cell
@@ -120,13 +138,13 @@ def _(cp_model, dados_h0):
     # 1. Iniciar o modelo CP-SAT
     model = cp_model.CpModel()
 
-    # 2. Extrair os dados da variável dados_h0 
-    turmas = dados_h0["turmas"]["turma"].tolist()
-    disciplinas = dados_h0["disciplinas"]["disciplina"].tolist()
+    # 2. Extrair listas a partir do dicionário retornado
+    turmas = dados_h0["turmas"]
+    disciplinas = [d["disciplina"] for d in dados_h0["disciplinas"]]
     dias = dados_h0["dias"]
     periodos = dados_h0["periodos"]
 
-    # 3. Criar as variáveis booleanas x[turma, disciplina, dia, periodo]
+    # 3. Criar as variáveis de decisão booleanas x[turma, disciplina, dia, periodo]
     x = {}
     for t in turmas:
         for d in disciplinas:
@@ -134,14 +152,31 @@ def _(cp_model, dados_h0):
                 for p in periodos:
                     x[t, d, dia, p] = model.NewBoolVar(f"x_{t}_{d}_{dia}_{p}")
 
-    # 4. R1 (No máximo 1 aula por turma em cada tempo)
+    # 4. R1: Uma turma não pode ter duas aulas em simultâneo (no máx. 1 por tempo)
     for t in turmas:
         for dia in dias:
             for p in periodos:
                 model.Add(sum(x[t, d, dia, p] for d in disciplinas) <= 1)
 
-    print(f"Total de variáveis booleanas x criadas: {len(x)}")
-    print("R1 adicionado com sucesso ao modelo!")
+    print(f"Total de variáveis booleanas criadas: {len(x)}")
+    print("R1 adicionada com sucesso ao modelo!")
+    return dias, model, periodos, turmas, x
+
+
+@app.cell
+def _(dados_h0, dias, model, periodos, turmas, x):
+    #R2: Cumprir exatamente a carga semanal de cada disciplina por turma
+    for d_info in dados_h0["disciplinas"]:
+        d_nome = d_info["disciplina"]
+        carga = d_info["carga_semanal"]
+
+        for t in turmas:
+            # A soma de todos os tempos da disciplina 'd_nome' na semana para a turma 't' tem de ser igual à carga
+            model.Add(
+                sum(x[t, d_nome, dia, p] for dia in dias for p in periodos) == carga
+            )
+
+    print("R2 adicionada com sucesso ao modelo!")
     return
 
 
