@@ -56,78 +56,119 @@ def _(mo):
 @app.cell
 def _():
     import csv
-    import os
+    from pathlib import Path
 
-    DIAS_SEMANA = ["Seg", "Ter", "Qua", "Qui", "Sex"]
-    PERIODOS_DIA = [1, 2, 3, 4, 5]
 
-    def ler_csv_validado(caminho, colunas_obrigatorias):
-        """Lê um CSV e valida as colunas obrigatórias."""
-        if not os.path.exists(caminho):
-            raise FileNotFoundError(f"Ficheiro não encontrado: {caminho}")
+    def _ler_csv_com_validacao(
+        caminho_ficheiro: Path, colunas_obrigatorias: set[str]
+    ) -> list[dict[str, str]]:
+        """Abre um CSV, valida se as colunas obrigatórias existem no cabeçalho
 
-        with open(caminho, mode="r", encoding="utf-8") as f:
-            leitor = csv.DictReader(f)
-            colunas_reais = set(col.strip() for col in (leitor.fieldnames or []))
-            em_falta = set(colunas_obrigatorias) - colunas_reais
-            if em_falta:
-                raise ValueError(f"Ficheiro {caminho} inválido: faltam as colunas {em_falta}")
+        e devolve uma lista de dicionários com strings sem espaços nos extremos
+        (strip).
+        """
+        if not caminho_ficheiro.exists():
+            raise FileNotFoundError(
+                f"Ficheiro obrigatório não encontrado: '{caminho_ficheiro}'"
+            )
 
-            return [{k.strip(): (v.strip() if v else "") for k, v in row.items()} for row in leitor]
+        linhas_limpas = []
+        with open(caminho_ficheiro, mode="r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            cabecalhos = set(col.strip() for col in (reader.fieldnames or []))
 
-    def carregar_dados(pasta="dados"):
-        """Carrega e tipifica os dados do problema a partir da pasta indicada."""
-        turmas_raw = ler_csv_validado(os.path.join(pasta, "turmas.csv"), ["turma"])
-        disciplinas_raw = ler_csv_validado(
-            os.path.join(pasta, "disciplinas.csv"),
-            ["disciplina", "professor", "carga_semanal", "duplo_periodo", "sala_especial"],
+            # Validação do cabeçalho
+            if not colunas_obrigatorias.issubset(cabecalhos):
+                em_falta = colunas_obrigatorias - cabecalhos
+                raise ValueError(
+                    f"Ficheiro '{caminho_ficheiro.name}' inválido. "
+                    f"Colunas em falta: {sorted(em_falta)}. Cabeçalho encontrado: {reader.fieldnames}"
+                )
+
+            for linha in reader:
+                linhas_limpas.append({
+                    k.strip(): (v.strip() if v is not None else "")
+                    for k, v in linha.items()
+                    if k is not None
+                })
+
+        return linhas_limpas
+
+
+    def carregar_dados(diretoria_dados: str | Path = "dados") -> dict:
+        """Lê e valida os 4 ficheiros CSV da diretoria indicada (R8)
+
+        e adiciona a estrutura temporal da semana escolar (5 dias x 5 períodos).
+        """
+        pasta = Path(diretoria_dados)
+        if not pasta.exists():
+            raise FileNotFoundError(f"A diretoria '{pasta}' não foi encontrada.")
+
+        # 1. Calendário escolar (5 dias x 5 períodos conforme o enunciado)
+        dias = ["Seg", "Ter", "Qua", "Qui", "Sex"]
+        periodos = [1, 2, 3, 4, 5]
+
+        # 2. turmas.csv
+        linhas_turmas = _ler_csv_com_validacao(
+            pasta / "turmas.csv",
+            colunas_obrigatorias={"turma"},
         )
-        salas_raw = ler_csv_validado(os.path.join(pasta, "salas.csv"), ["sala", "tipo", "quantidade"])
-        excecoes_raw = ler_csv_validado(
-            os.path.join(pasta, "disponibilidade_excecoes.csv"),
-            ["professor", "dia", "periodo"],
+        turmas = [l["turma"] for l in linhas_turmas if l["turma"]]
+
+        # 3. salas.csv
+        linhas_salas = _ler_csv_com_validacao(
+            pasta / "salas.csv",
+            colunas_obrigatorias={"sala", "tipo", "quantidade"},
         )
-
-        turmas = [r["turma"] for r in turmas_raw]
-
-        disciplinas = [
-            {
-                "disciplina": r["disciplina"],
-                "professor": r["professor"],
-                "carga_semanal": int(r["carga_semanal"]),
-                "duplo_periodo": r["duplo_periodo"].lower() == "sim",
-                "sala_especial": r["sala_especial"] if r["sala_especial"] != "" else None,
-            }
-            for r in disciplinas_raw
-        ]
-
         salas = [
             {
-                "sala": r["sala"],
-                "tipo": r["tipo"].lower(),
-                "quantidade": int(r["quantidade"]),
+                "sala": l["sala"],
+                "tipo": l["tipo"].lower(),
+                "quantidade": int(l["quantidade"]),
             }
-            for r in salas_raw
+            for l in linhas_salas
         ]
 
-        # Filtra exceções para garantir que pertencem ao calendário válido
-        excecoes = [
+        # 4. disciplinas.csv
+        linhas_disc = _ler_csv_com_validacao(
+            pasta / "disciplinas.csv",
+            colunas_obrigatorias={
+                "disciplina",
+                "professor",
+                "carga_semanal",
+                "duplo_periodo",
+                "sala_especial",
+            },
+        )
+        disciplinas = [
             {
-                "professor": r["professor"],
-                "dia": r["dia"],
-                "periodo": int(r["periodo"]),
+                "disciplina": l["disciplina"],
+                "professor": l["professor"],
+                "carga_semanal": int(l["carga_semanal"]),
+                "duplo_periodo": l["duplo_periodo"].lower() in ("sim", "true", "1"),
+                "sala_especial": l["sala_especial"] or None,
             }
-            for r in excecoes_raw
-            if r["dia"] in DIAS_SEMANA and int(r["periodo"]) in PERIODOS_DIA
+            for l in linhas_disc
         ]
+
+        # 5. disponibilidade_excecoes.csv
+        linhas_disp = _ler_csv_com_validacao(
+            pasta / "disponibilidade_excecoes.csv",
+            colunas_obrigatorias={"professor", "dia", "periodo"},
+        )
+        indisponibilidades = {
+            (l["professor"], l["dia"], int(l["periodo"]))
+            for l in linhas_disp
+            if l["dia"] in dias and int(l["periodo"]) in periodos
+        }
 
         return {
+            "dias": dias,
+            "periodos": periodos,
             "turmas": turmas,
-            "disciplinas": disciplinas,
             "salas": salas,
-            "excecoes": excecoes,
-            "dias": DIAS_SEMANA,
-            "periodos": PERIODOS_DIA,
+            "disciplinas": disciplinas,
+            "indisponibilidades": indisponibilidades,
         }
 
     return
@@ -177,6 +218,50 @@ def _(dados_h0, dias, model, periodos, turmas, x):
             )
 
     print("R2 adicionada com sucesso ao modelo!")
+    return
+
+
+@app.cell
+def _(dados, model, x):
+    # Supondo: turmas, dias, periodos = [1, 2, 3, 4, 5]
+    # e x[(t, d_nome, dia, p)] como variáveis booleanas já criadas
+
+    for d in dados["disciplinas"]:
+        d_nome = d["disciplina"]
+        e_duplo = d["duplo_periodo"]
+
+        for t in dados["turmas"]:
+            for dia in dados["dias"]:
+
+                if not e_duplo:
+                    # R3 para disciplinas normais: no máximo 1 aula por dia
+                    model.Add(
+                        sum(x[(t, d_nome, dia, p)] for p in dados["periodos"]) <= 1
+                    )
+
+                else:
+                    # R3 e R4 para disciplinas com duplo_periodo=sim:
+                    # Criar variáveis booleanas para o início do bloco duplo (períodos 1 a 4)
+                    bloco_inicio = {
+                        p: model.NewBoolVar(f"bloco_{t}_{d_nome}_{dia}_{p}")
+                        for p in [1, 2, 3, 4]
+                    }
+
+                    # R3: No máximo 1 bloco duplo por dia
+                    model.Add(sum(bloco_inicio.values()) <= 1)
+
+                    # R4: Ligar as variáveis x normais ao início do bloco
+                    model.Add(x[(t, d_nome, dia, 1)] == bloco_inicio[1])
+                    model.Add(
+                        x[(t, d_nome, dia, 2)] == bloco_inicio[1] + bloco_inicio[2]
+                    )
+                    model.Add(
+                        x[(t, d_nome, dia, 3)] == bloco_inicio[2] + bloco_inicio[3]
+                    )
+                    model.Add(
+                        x[(t, d_nome, dia, 4)] == bloco_inicio[3] + bloco_inicio[4]
+                    )
+                    model.Add(x[(t, d_nome, dia, 5)] == bloco_inicio[4])
     return
 
 
