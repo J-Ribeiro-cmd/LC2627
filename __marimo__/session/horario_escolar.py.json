@@ -1,0 +1,110 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.25.0",
+    "script_metadata_hash": "cdac4f193ea60f385129ed849f93ec6c"
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "cb7be5298e0467e415859912235769b9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"trabalho-pratico-gerador-de-horario-escolar\">Trabalho Pr\u00e1tico: Gerador de Hor\u00e1rio Escolar</h1>\n<h2 id=\"1-introducao\">1. Introdu\u00e7\u00e3o</h2>\n<span class=\"paragraph\">Este trabalho tem como objetivo a conce\u00e7\u00e3o e implementa\u00e7\u00e3o de um sistema autom\u00e1tico para gera\u00e7\u00e3o de hor\u00e1rios escolares semanais. O problema \u00e9 formulado como um <strong>Problema de Satisfa\u00e7\u00e3o de Restri\u00e7\u00f5es (CSP)</strong> e otimiza\u00e7\u00e3o inteira, utilizando a biblioteca <strong>Google OR-Tools (CP-SAT)</strong>.</span>\n<span class=\"paragraph\">Para a manipula\u00e7\u00e3o dos dados de entrada, optou-se por utilizar o m\u00f3dulo nativo <strong><code>csv</code></strong> da biblioteca standard de Python (em vez de <code>pandas</code>), garantindo maior leveza, aus\u00eancia de depend\u00eancias externas e uma convers\u00e3o direta para as estruturas nativas (listas e dicion\u00e1rios) que o solver manipula com facilidade.</span>\n<span class=\"paragraph\">O sistema responde aos seguintes eixos principais:</span>\n<ol>\n<li>Respeito integral por todos os requisitos operacionais (<strong>R1 a R8</strong>).</li>\n<li>Minimiza\u00e7\u00e3o dos tempos mortos (\"buracos\") nos hor\u00e1rios dos professores (<strong>O1</strong>).</li>\n<li>Capacidade de adapta\u00e7\u00e3o incremental est\u00e1vel face a altera\u00e7\u00f5es de recursos (<strong>R9</strong>).</li>\n</ol></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "20e5d46aa1a2705d81f58523e248a76e",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "585c573c08b470e8ada78e07309ef85b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"2-leitura-e-preparacao-dos-dados-r8\">2. Leitura e Prepara\u00e7\u00e3o dos Dados (R8)</h2>\n<span class=\"paragraph\">Os dados de entrada s\u00e3o lidos diretamente dos ficheiros CSV (<code>turmas.csv</code>, <code>disciplinas.csv</code>, <code>salas.csv</code> e <code>disponibilidade_excecoes.csv</code>), garantindo a total aus\u00eancia de dados fixos (<em>hardcoded</em>) no c\u00f3digo.</span>\n<span class=\"paragraph\">A leitura \u00e9 dividida em duas fun\u00e7\u00f5es:</span>\n<ul>\n<li><strong><code>ler_csv_validado</code></strong>: Uma fun\u00e7\u00e3o utilit\u00e1ria e gen\u00e9rica que abre qualquer CSV com <code>csv.DictReader</code>, valida se os cabe\u00e7alhos obrigat\u00f3rios existem e devolve o texto limpo.</li>\n<li><strong><code>carregar_dados</code></strong>: Orquestra o carregamento dos quatro ficheiros e converte os valores em tipos nativos de Python (inteiros para a carga hor\u00e1ria e capacidades, booleanos para duplos per\u00edodos, etc.).</li>\n</ul>\n<span class=\"paragraph\">A semana letiva \u00e9 composta por 5 dias (<code>Seg</code> a <code>Sex</code>), com 5 tempos letivos di\u00e1rios (per\u00edodos 1 a 5).</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "24fdb0e2c48ec7234cd55de65e52ddb6",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "ad350e7892368aaa1fb9c38e15b7b0f0",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "accf1b731ed3cc66607e4fabc288d0c9",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "e241d21a7512c2a4be15f6b3f2fb4f25",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "kxKA",
+      "code_hash": "7c89e8cc55251c864d58e1112a6e7089",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Yihz",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "epym",
+      "code_hash": "464b48e99217d59265488a01361d078c",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "name 'dados_h0' is not defined",
+          "traceback": null
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">&quot;/tmp/marimo_4770/__marimo__cell_epym_.py&quot;</span>, line <span class=\"m\">4</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"k\">for</span> <span class=\"n\">d</span> <span class=\"ow\">in</span> <span class=\"n\">dados_h0</span><span class=\"p\">[</span><span class=\"s2\">&quot;disciplinas&quot;</span><span class=\"p\">]:</span>\n<span class=\"w\">             </span><span class=\"pm\">^^^^^^^^</span>\n<span class=\"gr\">NameError</span>: <span class=\"n\">name &#39;dados_h0&#39; is not defined</span>\n</pre></div>\n</span>",
+          "mimetype": "application/vnd.marimo+traceback"
+        }
+      ]
+    },
+    {
+      "id": "lMDO",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    }
+  ]
+}
