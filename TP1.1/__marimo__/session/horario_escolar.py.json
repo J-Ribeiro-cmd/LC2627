@@ -21,14 +21,7 @@
     {
       "id": "MJUe",
       "code_hash": "20e5d46aa1a2705d81f58523e248a76e",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
+      "outputs": [],
       "console": []
     },
     {
@@ -47,148 +40,26 @@
     {
       "id": "bkHC",
       "code_hash": "fd6e8c87d1cac448ccc28856bf4e49db",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
+      "outputs": [],
       "console": []
     },
     {
       "id": "lEQa",
-      "code_hash": "64ae84c2e627da7d608c74bda84c7be6",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stdout",
-          "text": "Total de vari\u00e1veis booleanas criadas: 300\nR1 adicionada com sucesso ao modelo!\n",
-          "mimetype": "text/plain"
-        }
-      ]
-    },
-    {
-      "id": "PKri",
-      "code_hash": "0cee2cba01a895e4cf65cc70c2a2388e",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stdout",
-          "text": "R2 adicionada com sucesso ao modelo!\n",
-          "mimetype": "text/plain"
-        }
-      ]
-    },
-    {
-      "id": "Xref",
-      "code_hash": "3f50dd7920169b3a47785b29afa24dc4",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
+      "code_hash": "e13a1c950509a9382b68546ce1908a09",
+      "outputs": [],
       "console": []
     },
     {
-      "id": "SFPL",
-      "code_hash": "3e4a07606061e17625f4ab343a58c99b",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stdout",
-          "text": "R5 adicionada com sucesso ao modelo!\n",
-          "mimetype": "text/plain"
-        }
-      ]
+      "id": "GhZL",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
     },
     {
-      "id": "BYtC",
-      "code_hash": "d3f65c8b9fd96303ada071af2a21f43f",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stdout",
-          "text": "R6 adicionada com sucesso ao modelo!\n",
-          "mimetype": "text/plain"
-        }
-      ]
-    },
-    {
-      "id": "RGSE",
-      "code_hash": "c544c75cec32f95de76959f60c8b5a98",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stdout",
-          "text": "R7 adicionada com sucesso ao modelo!\n",
-          "mimetype": "text/plain"
-        }
-      ]
-    },
-    {
-      "id": "Kclp",
-      "code_hash": "28ef473c493d458b251a1ce141a3354d",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stdout",
-          "text": "=== Solu\u00e7\u00e3o \u00d3TIMA encontrada com sucesso! ===\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL: TURMA 7\u00baA\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |               ---                |               ---                |      Matem\u00e1tica (Prof. Ana)      |      Matem\u00e1tica (Prof. Ana)      |               ---                |\n 2\u00ba Per\u00edodo |      Hist\u00f3ria (Prof. Diana)      |     Portugu\u00eas (Prof. Bruno)      |               ---                |      Ci\u00eancias (Prof. Carla)      |      Matem\u00e1tica (Prof. Ana)      |\n 3\u00ba Per\u00edodo |               ---                |               ---                |     Portugu\u00eas (Prof. Bruno)      |       Ingl\u00eas (Prof. Diana)       |      Ci\u00eancias (Prof. Carla)      |\n 4\u00ba Per\u00edodo |       Ingl\u00eas (Prof. Diana)       | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Hist\u00f3ria (Prof. Diana)      |               ---                |               ---                |\n 5\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Ci\u00eancias (Prof. Carla)      |     Portugu\u00eas (Prof. Bruno)      |     Portugu\u00eas (Prof. Bruno)      |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL: TURMA 7\u00baB\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |      Ci\u00eancias (Prof. Carla)      |               ---                |               ---                |               ---                |               ---                |\n 2\u00ba Per\u00edodo |               ---                |      Ci\u00eancias (Prof. Carla)      |               ---                |     Portugu\u00eas (Prof. Bruno)      |               ---                |\n 3\u00ba Per\u00edodo |      Hist\u00f3ria (Prof. Diana)      |      Matem\u00e1tica (Prof. Ana)      |      Matem\u00e1tica (Prof. Ana)      |      Matem\u00e1tica (Prof. Ana)      |     Portugu\u00eas (Prof. Bruno)      |\n 4\u00ba Per\u00edodo | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |     Portugu\u00eas (Prof. Bruno)      |     Portugu\u00eas (Prof. Bruno)      |      Ci\u00eancias (Prof. Carla)      |      Hist\u00f3ria (Prof. Diana)      |\n 5\u00ba Per\u00edodo | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |               ---                |       Ingl\u00eas (Prof. Diana)       |       Ingl\u00eas (Prof. Diana)       |      Matem\u00e1tica (Prof. Ana)      |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n",
-          "mimetype": "text/plain"
-        }
-      ]
+      "id": "qmYP",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
     }
   ]
 }

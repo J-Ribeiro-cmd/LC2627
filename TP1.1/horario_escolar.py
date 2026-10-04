@@ -172,7 +172,8 @@ def _():
         }
 
     dados_h0 = carregar_dados("dados/")
-    return (dados_h0,)
+    dados_h1 = carregar_dados("dados_v2/")
+    return dados_h0, dados_h1
 
 
 @app.cell
@@ -327,28 +328,70 @@ def _(cp_model):
 
 
 @app.cell
-def _(construir_modelo, cp_model, dados_h0):
-    model, x = construir_modelo(dados_h0)
+def _(construir_modelo, cp_model):
+    def resolver(dados, base=None):
+        # 1. Modelo novo: cada chamada tem o seu modelo e as suas variáveis
 
-    turmas = dados_h0["turmas"]
-    disciplinas = [_d["disciplina"] for _d in dados_h0["disciplinas"]]
-    dias = dados_h0["dias"]
-    periodos = dados_h0["periodos"]
+        model, x = construir_modelo(dados)
 
-    # 1. Configurar e executar o solver CP-SAT
-    solver = cp_model.CpSolver()
+        # 3. Parte incremental: só existe quando é dado um horário base
+        if base is not None:
+            # Pares (turma, disciplina) que já existiam no horário base
+            pares_base = set()
+            for t, d_nome, dia, p in base:
+                pares_base.add((t, d_nome))
 
-    status = solver.Solve(model)
+            # 3a. Hint: sugerir ao solver os valores que as variáveis tinham no base
+            for chave in x:
+                t, d_nome, dia, p = chave
+                if (t, d_nome) in pares_base:
+                    if chave in base:
+                        model.AddHint(x[chave], 1)
+                    else:
+                        model.AddHint(x[chave], 0)
 
-    # 2. Mapeamento auxiliar de disciplina -> professor a partir de dados_h0
+            # 3b. Objetivo: (1 - x) vale 0 se a aula fica no seu tempo e 1 se muda
+            mudancas = []
+            for chave in base:
+                if chave in x:          # só conta se a aula ainda existir nos dados novos
+                    mudancas.append(1 - x[chave])
+            model.Minimize(sum(mudancas))
+
+        # 4. Resolver (com limite de tempo)
+        solver = cp_model.CpSolver()
+        solver.parameters.max_time_in_seconds = 30
+        status = solver.Solve(model)
+        tempo = solver.WallTime()
+
+        # 5. Sem solução: devolve None no lugar do horário
+        if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
+            return None, tempo
+
+        # 6. Passar a solução para um set de tuplos
+        horario = set()
+        for chave in x:
+            if solver.Value(x[chave]) == 1:
+                horario.add(chave)
+        return horario, tempo
+
+    return (resolver,)
+
+
+@app.function
+def mostrar_horario(dados, horario, titulo):
+    turmas = dados["turmas"]
+    disciplinas = [_d["disciplina"] for _d in dados["disciplinas"]]
+    dias = dados["dias"]
+    periodos = dados["periodos"]
+
+    # 1. Mapeamento auxiliar de disciplina -> professor a partir dos dados
     prof_por_disciplina = {
-        _d["disciplina"]: _d["professor"] for _d in dados_h0["disciplinas"]
+        _d["disciplina"]: _d["professor"] for _d in dados["disciplinas"]
     }
 
-    # 3. Tratar o resultado da resolução
-    if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-        status_str = "ÓTIMA" if status == cp_model.OPTIMAL else "VIÁVEL"
-        print(f"=== Solução {status_str} encontrada com sucesso! ===\n")
+    # 2. Tratar o resultado da resolução
+    if horario is not None:
+        print(f"=== {titulo}: solução encontrada com sucesso! ===\n")
 
         # Largura de cada coluna da grelha para garantir alinhamento perfeito
         col_w = 34
@@ -361,7 +404,7 @@ def _(construir_modelo, cp_model, dados_h0):
             separador = "-" * len(cabecalho)
 
             print("=" * len(cabecalho))
-            print(f" HORÁRIO SEMANAL: TURMA {_t}")
+            print(f" HORÁRIO SEMANAL {titulo}: TURMA {_t}")
             print("=" * len(cabecalho))
             print(cabecalho)
             print(separador)
@@ -372,10 +415,9 @@ def _(construir_modelo, cp_model, dados_h0):
 
                 for _dia in dias:
                     aula_str = "---"
-                    for _d in disciplinas:
-                        _d_nome = _d["disciplina"] if isinstance(_d, dict) else _d
+                    for _d_nome in disciplinas:
                         # Verifica se a aula está atribuída a este tempo
-                        if solver.Value(x[_t, _d_nome, _dia, _p]) == 1:
+                        if (_t, _d_nome, _dia, _p) in horario:
                             _prof = prof_por_disciplina.get(_d_nome, "Prof. ?")
                             aula_str = f"{_d_nome} ({_prof})"
                             break
@@ -387,8 +429,35 @@ def _(construir_modelo, cp_model, dados_h0):
             print(separador)
             print("\n")
 
-    elif status == cp_model.INFEASIBLE:
-        print("ERRO: O modelo é INVIÁVEL (INFEASIBLE).")
+    else:
+        print(f"ERRO: {titulo} sem solução (modelo INVIÁVEL ou tempo esgotado).")
+
+
+@app.cell
+def _(dados_h0, resolver):
+    h0, t_h0 = resolver(dados_h0)
+    mostrar_horario(dados_h0, h0, "H0")
+    return (h0,)
+
+
+@app.cell
+def _(dados_h1, resolver):
+    h1_zero, t_zero = resolver(dados_h1)
+    mostrar_horario(dados_h1, h1_zero, "H1 do zero")
+    return h1_zero, t_zero
+
+
+@app.cell
+def _(dados_h1, h0, resolver):
+    h1_inc, t_inc = resolver(dados_h1, base=h0)
+    mostrar_horario(dados_h1, h1_inc, "H1 incremental")
+    return h1_inc, t_inc
+
+
+@app.cell
+def _(h0, h1_inc, h1_zero, t_inc, t_zero):
+    print(f"H1 do zero:      {t_zero:.4f} s, {len(h0 - h1_zero)} aulas alteradas")
+    print(f"H1 incremental:  {t_inc:.4f} s, {len(h0 - h1_inc)} aulas alteradas")
     return
 
 
