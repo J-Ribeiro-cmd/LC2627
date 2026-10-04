@@ -171,7 +171,8 @@ def _():
             "indisponibilidades": indisponibilidades,
         }
 
-    return
+    dados_h0 = carregar_dados("dados/")
+    return (dados_h0,)
 
 
 @app.cell
@@ -181,40 +182,40 @@ def _(cp_model, dados_h0):
 
     # 2. Extrair listas a partir do dicionário retornado
     turmas = dados_h0["turmas"]
-    disciplinas = [d["disciplina"] for d in dados_h0["disciplinas"]]
+    disciplinas = [_d["disciplina"] for _d in dados_h0["disciplinas"]]
     dias = dados_h0["dias"]
     periodos = dados_h0["periodos"]
 
     # 3. Criar as variáveis de decisão booleanas x[turma, disciplina, dia, periodo]
     x = {}
-    for t in turmas:
-        for d in disciplinas:
-            for dia in dias:
-                for p in periodos:
-                    x[t, d, dia, p] = model.NewBoolVar(f"x_{t}_{d}_{dia}_{p}")
+    for _t in turmas:
+        for _d in disciplinas:
+            for _dia in dias:
+                for _p in periodos:
+                    x[_t, _d, _dia, _p] = model.NewBoolVar(f"x_{_t}_{_d}_{_dia}_{_p}")
 
     # 4. R1: Uma turma não pode ter duas aulas em simultâneo (no máx. 1 por tempo)
-    for t in turmas:
-        for dia in dias:
-            for p in periodos:
-                model.Add(sum(x[t, d, dia, p] for d in disciplinas) <= 1)
+    for _t in turmas:
+        for _dia in dias:
+            for _p in periodos:
+                model.Add(sum(x[_t, _d, _dia, _p] for _d in disciplinas) <= 1)
 
     print(f"Total de variáveis booleanas criadas: {len(x)}")
     print("R1 adicionada com sucesso ao modelo!")
-    return dias, model, periodos, turmas, x
+    return dias, disciplinas, model, periodos, turmas, x
 
 
 @app.cell
 def _(dados_h0, dias, model, periodos, turmas, x):
     #R2: Cumprir exatamente a carga semanal de cada disciplina por turma
     for d_info in dados_h0["disciplinas"]:
-        d_nome = d_info["disciplina"]
+        _d_nome = d_info["disciplina"]
         carga = d_info["carga_semanal"]
 
-        for t in turmas:
+        for _t in turmas:
             # A soma de todos os tempos da disciplina 'd_nome' na semana para a turma 't' tem de ser igual à carga
             model.Add(
-                sum(x[t, d_nome, dia, p] for dia in dias for p in periodos) == carga
+                sum(x[_t, _d_nome, _dia, _p] for _dia in dias for _p in periodos) == carga
             )
 
     print("R2 adicionada com sucesso ao modelo!")
@@ -222,46 +223,188 @@ def _(dados_h0, dias, model, periodos, turmas, x):
 
 
 @app.cell
-def _(dados, model, x):
+def _(dados_h0, model, x):
     # Supondo: turmas, dias, periodos = [1, 2, 3, 4, 5]
     # e x[(t, d_nome, dia, p)] como variáveis booleanas já criadas
 
-    for d in dados["disciplinas"]:
-        d_nome = d["disciplina"]
-        e_duplo = d["duplo_periodo"]
+    for _d in dados_h0["disciplinas"]:
+        _d_nome = _d["disciplina"]
+        e_duplo = _d["duplo_periodo"]
 
-        for t in dados["turmas"]:
-            for dia in dados["dias"]:
+        for _t in dados_h0["turmas"]:
+            for _dia in dados_h0["dias"]:
 
                 if not e_duplo:
                     # R3 para disciplinas normais: no máximo 1 aula por dia
                     model.Add(
-                        sum(x[(t, d_nome, dia, p)] for p in dados["periodos"]) <= 1
+                        sum(x[(_t, _d_nome, _dia, _p)] for _p in dados_h0["periodos"]) <= 1
                     )
 
                 else:
                     # R3 e R4 para disciplinas com duplo_periodo=sim:
                     # Criar variáveis booleanas para o início do bloco duplo (períodos 1 a 4)
                     bloco_inicio = {
-                        p: model.NewBoolVar(f"bloco_{t}_{d_nome}_{dia}_{p}")
-                        for p in [1, 2, 3, 4]
+                        _p: model.NewBoolVar(f"bloco_{_t}_{_d_nome}_{_dia}_{_p}")
+                        for _p in [1, 2, 3, 4]
                     }
 
                     # R3: No máximo 1 bloco duplo por dia
                     model.Add(sum(bloco_inicio.values()) <= 1)
 
                     # R4: Ligar as variáveis x normais ao início do bloco
-                    model.Add(x[(t, d_nome, dia, 1)] == bloco_inicio[1])
+                    model.Add(x[(_t, _d_nome, _dia, 1)] == bloco_inicio[1])
                     model.Add(
-                        x[(t, d_nome, dia, 2)] == bloco_inicio[1] + bloco_inicio[2]
+                        x[(_t, _d_nome, _dia, 2)] == bloco_inicio[1] + bloco_inicio[2]
                     )
                     model.Add(
-                        x[(t, d_nome, dia, 3)] == bloco_inicio[2] + bloco_inicio[3]
+                        x[(_t, _d_nome, _dia, 3)] == bloco_inicio[2] + bloco_inicio[3]
                     )
                     model.Add(
-                        x[(t, d_nome, dia, 4)] == bloco_inicio[3] + bloco_inicio[4]
+                        x[(_t, _d_nome, _dia, 4)] == bloco_inicio[3] + bloco_inicio[4]
                     )
-                    model.Add(x[(t, d_nome, dia, 5)] == bloco_inicio[4])
+                    model.Add(x[(_t, _d_nome, _dia, 5)] == bloco_inicio[4])
+    return
+
+
+@app.cell
+def _(dados_h0, dias, model, periodos, turmas, x):
+    #R5 Um professor não pode dar duas aulas em simultâneo, mesmo que sejam a turmas ou disciplinas diferentes.
+    professores = set(_d["professor"] for _d in dados_h0["disciplinas"])
+    disciplinas_prof = {_prof:[] for _prof in professores}
+
+    for _d in dados_h0["disciplinas"]:
+        disciplinas_prof[_d["professor"]].append(_d["disciplina"])
+
+    for _prof in professores:
+        disc_prof = disciplinas_prof[_prof]
+        for _dia in dias:
+            for _p in periodos:
+                model.Add(
+                    sum(
+                        x[_t, _d, _dia, _p]
+                        for _t in turmas
+                        for _d in disc_prof
+                    )<=1
+                )
+    print("R5 adicionada com sucesso ao modelo!")
+    return (disciplinas_prof,)
+
+
+@app.cell
+def _(dados_h0, disciplinas_prof, model, turmas, x):
+    # R6: Um professor só pode dar aulas nos tempos em que está disponível
+    for _prof, _dia, _p in dados_h0["indisponibilidades"]:
+        # Se o professor lecionar disciplinas no sistema
+        if _prof in disciplinas_prof:
+            for _d in disciplinas_prof[_prof]:
+                for _t in turmas:
+                    # Força a variável booleana a ser 0 naquele período
+                    model.Add(x[_t, _d, _dia, _p] == 0)
+
+    print("R6 adicionada com sucesso ao modelo!")
+    return
+
+
+@app.cell
+def _(dados_h0, dias, model, periodos, turmas, x):
+    # R7: Capacidade de Salas (Especiais e Normais)
+    discs_normais=[]
+    discs_especiais_sala= {}
+    for _d in dados_h0["disciplinas"]:
+        sala_esp = _d.get("sala_especial")
+        _d_nome = _d["disciplina"]
+
+        if sala_esp and sala_esp.strip() != "":
+            if sala_esp not in discs_especiais_sala:
+                discs_especiais_sala[sala_esp] = []
+            discs_especiais_sala[sala_esp].append(_d_nome)
+        else: discs_normais.append(_d_nome)
+
+    cap_salas = {s["sala"]: s["quantidade"] for s in dados_h0["salas"]}
+    qtd_salas_normais = cap_salas.get("Sala Normal")
+
+    for _dia in dias:
+        for _p in periodos:
+            # A) Capacidade para cada sala especial
+            for sala_esp, discs_esp in discs_especiais_sala.items():
+                cap_esp = cap_salas.get(sala_esp)
+                model.Add(
+                    sum(
+                        x[_t, _d, _dia, _p]
+                        for _t in turmas
+                        for _d in discs_esp
+                    ) <= cap_esp
+                )
+        
+            # B) Capacidade para salas normais
+            model.Add(
+                sum(
+                    x[_t, _d, _dia, _p]
+                    for _t in turmas
+                    for _d in discs_normais
+                ) <= qtd_salas_normais
+            )
+
+    print("R7 adicionada com sucesso ao modelo!")
+    return
+
+
+@app.cell
+def _(cp_model, dados_h0, dias, disciplinas, model, periodos, turmas, x):
+    # 1. Configurar e executar o solver CP-SAT
+    solver = cp_model.CpSolver()
+
+    status = solver.Solve(model)
+
+    # 2. Mapeamento auxiliar de disciplina -> professor a partir de dados_h0
+    prof_por_disciplina = {
+        _d["disciplina"]: _d["professor"] for _d in dados_h0["disciplinas"]
+    }
+
+    # 3. Tratar o resultado da resolução
+    if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        status_str = "ÓTIMA" if status == cp_model.OPTIMAL else "VIÁVEL"
+        print(f"=== Solução {status_str} encontrada com sucesso! ===\n")
+
+        # Largura de cada coluna da grelha para garantir alinhamento perfeito
+        col_w = 34
+
+        for _t in turmas:
+            # Cabeçalho dos dias da semana
+            cabecalho = f"{'Tempo':^12}|" + "".join(
+                f"{_d:^{col_w}}|" for _d in dias
+            )
+            separador = "-" * len(cabecalho)
+
+            print("=" * len(cabecalho))
+            print(f" HORÁRIO SEMANAL: TURMA {_t}")
+            print("=" * len(cabecalho))
+            print(cabecalho)
+            print(separador)
+
+            # Linhas correspondentes a cada período letivo
+            for _p in periodos:
+                linha_conteudo = [f"{f'{_p}º Período':^12}|"]
+
+                for _dia in dias:
+                    aula_str = "---"
+                    for _d in disciplinas:
+                        _d_nome = _d["disciplina"] if isinstance(_d, dict) else _d
+                        # Verifica se a aula está atribuída a este tempo
+                        if solver.Value(x[_t, _d_nome, _dia, _p]) == 1:
+                            _prof = prof_por_disciplina.get(_d_nome, "Prof. ?")
+                            aula_str = f"{_d_nome} ({_prof})"
+                            break
+
+                    linha_conteudo.append(f"{aula_str:^{col_w}}|")
+
+                print("".join(linha_conteudo))
+
+            print(separador)
+            print("\n")
+
+    elif status == cp_model.INFEASIBLE:
+        print("ERRO: O modelo é INVIÁVEL (INFEASIBLE).")
     return
 
 
