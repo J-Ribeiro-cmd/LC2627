@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["marimo"]
+# dependencies = ["marimo", "ortools"]
 # requires-python = ">=3.14"
 # ///
 
@@ -45,7 +45,7 @@ def _(mo):
     Os dados de entrada são lidos diretamente dos ficheiros CSV (`turmas.csv`, `disciplinas.csv`, `salas.csv` e `disponibilidade_excecoes.csv`), garantindo a total ausência de dados fixos (*hardcoded*) no código.
 
     A leitura é dividida em duas funções:
-    - **`ler_csv_validado`**: Uma função utilitária e genérica que abre qualquer CSV com `csv.DictReader`, valida se os cabeçalhos obrigatórios existem e devolve o texto limpo.
+    - **`_ler_csv_com_validacao`**: Uma função utilitária e genérica que abre qualquer CSV com `csv.DictReader`, valida se os cabeçalhos obrigatórios existem e devolve o texto limpo.
     - **`carregar_dados`**: Orquestra o carregamento dos quatro ficheiros e converte os valores em tipos nativos de Python (inteiros para a carga horária e capacidades, booleanos para duplos períodos, etc.).
 
     A semana letiva é composta por 5 dias (`Seg` a `Sex`), com 5 tempos letivos diários (períodos 1 a 5).
@@ -298,7 +298,9 @@ def _(cp_model):
             else: discs_normais.append(_d_nome)
 
         cap_salas = {s["sala"]: s["quantidade"] for s in dados["salas"]}
-        qtd_salas_normais = cap_salas.get("Sala Normal")
+        qtd_salas_normais = sum(
+            s["quantidade"] for s in dados["salas"] if s["tipo"] == "normal"
+        )
 
         for _dia in dias:
             for _p in periodos:
