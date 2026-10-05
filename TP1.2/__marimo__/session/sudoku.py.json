@@ -7,7 +7,7 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": "be5bfa480c03d358e08d84cb3df4dd92",
+      "code_hash": "c827c09510b9c07f4c6e433e6a3cd401",
       "outputs": [
         {
           "type": "data",
@@ -145,6 +145,98 @@
           "type": "stream",
           "name": "stdout",
           "text": "{(2, 8): 1, (2, 1): 4, (7, 8): 3}\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 4, 0, 0, 0, 0, 0, 0, 1]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0, 0, 0, 3]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "ausz",
+      "code_hash": "5487a275dade1b8acdaf539f949cbd16",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"5-modelo-csp-e-resolucao-r5-r6\">5. Modelo CSP e resolu\u00e7\u00e3o (R5, R6)</h2>\n<span class=\"paragraph\">A classe <code>sudoku</code> \u00e9 o modelo CSP da grelha <marimo-tex class=\"arithmatex\">||(n^2 \\times n^2||)</marimo-tex>. Usa o CP-SAT e tem tr\u00eas partes:</span>\n<ul>\n<li>o construtor <code>sudoku(n=3)</code>, que cria o modelo e uma vari\u00e1vel inteira por c\u00e9lula, cada uma no intervalo <marimo-tex class=\"arithmatex\">||([1, n^2]||)</marimo-tex>. As vari\u00e1veis ficam num dicion\u00e1rio <code>x</code>, com a posi\u00e7\u00e3o <marimo-tex class=\"arithmatex\">||((i, j)||)</marimo-tex> como chave;</li>\n<li>o m\u00e9todo <code>junta(*grupos)</code>, que recebe um n\u00famero arbitr\u00e1rio de grupos. Para cada grupo, imp\u00f5e a restri\u00e7\u00e3o \"todos diferentes\" (<code>AddAllDifferent</code>) sobre as vari\u00e1veis das suas c\u00e9lulas e fixa as c\u00e9lulas que tiverem valor atribu\u00eddo. O m\u00e9todo s\u00f3 usa o dicion\u00e1rio <code>celulas</code> do grupo, por isso n\u00e3o distingue se \u00e9 um <code>box</code>, um <code>cube</code>, um <code>path</code> ou um grupo de pistas;</li>\n<li>o m\u00e9todo <code>resolve()</code>, que chama o solver e devolve a grelha preenchida, como lista de listas, ou <code>None</code> se o puzzle n\u00e3o tiver solu\u00e7\u00e3o.\n\"\\\"\")</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "YRaw",
+      "code_hash": "121a642d108a6987066e0320ee24975b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "llMD",
+      "code_hash": "362f20d480a70eff61c9989cbba6bf96",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "81\nx_0_0\nsem erros\n[9, 8, 7, 6, 5, 4, 3, 2, 1]\n[1, 1, 1, 1, 1, 1, 1, 1, 1]\n[1, 1, 1, 1, 1, 1, 1, 1, 1]\n[1, 1, 1, 1, 1, 1, 1, 1, 1]\n[1, 1, 1, 1, 1, 1, 1, 1, 1]\n[1, 1, 1, 1, 1, 1, 1, 1, 1]\n[1, 1, 1, 1, 1, 1, 1, 1, 1]\n[1, 1, 1, 1, 1, 1, 1, 1, 1]\n[1, 1, 1, 1, 1, 1, 1, 1, 1]\nNone\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "PlEC",
+      "code_hash": "22031fd0155e729cf6659a991e6cd635",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"sudoku-completo-r6\">Sudoku completo (R6)</h3>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>resolve_sudoku(p, n=3)</code> monta um Sudoku completo: cria um modelo <code>sudoku</code> e junta-lhe todas as linhas e todas as colunas (com <code>path</code>), todos os blocos (com <code>cube</code>) e o grupo de pistas <code>p</code>. Para <marimo-tex class=\"arithmatex\">||(n=3||)</marimo-tex> s\u00e3o 28 grupos, todos tratados da mesma forma pelo <code>junta</code>. A montagem \u00e9 uma fun\u00e7\u00e3o fora da classe <code>sudoku</code> para o modelo continuar gen\u00e9rico: outras variantes de Sudoku fazem-se juntando outros grupos, sem alterar a classe.</span>\n<span class=\"paragraph\"><strong>Puzzle sem solu\u00e7\u00e3o.</strong> As pistas s\u00e3o sorteadas ao acaso, por isso o puzzle pode n\u00e3o ter solu\u00e7\u00e3o (por exemplo, quando duas pistas ficam com o mesmo valor). Nesse caso opt\u00e1mos por sortear pistas novas e tentar outra vez, em vez de apenas reportar o insucesso, porque o objetivo \u00e9 obter um Sudoku resolvido. A fun\u00e7\u00e3o <code>gera_sudoku(k=None, n=3, tentativas=20)</code> faz isso e devolve as pistas usadas e a grelha. Cada tentativa cria um modelo novo, porque n\u00e3o se podem retirar restri\u00e7\u00f5es de um modelo. O n\u00famero de tentativas \u00e9 limitado para o programa nunca ficar preso: se nenhuma tiver solu\u00e7\u00e3o, a fun\u00e7\u00e3o devolve <code>None, None</code>. \u00c9 o que acontece sempre que <marimo-tex class=\"arithmatex\">||(k &gt; n^2||)</marimo-tex>, porque as pistas t\u00eam de ser todas diferentes e s\u00f3 h\u00e1 <marimo-tex class=\"arithmatex\">||(n^2||)</marimo-tex> valores.</span>\n<span class=\"paragraph\"><strong>Apresenta\u00e7\u00e3o.</strong> A fun\u00e7\u00e3o <code>mostra(grelha, n=3)</code> escreve a grelha em texto, com separadores entre os blocos. Escolhemos texto por ser simples, funcionar para qualquer <marimo-tex class=\"arithmatex\">||(n||)</marimo-tex> e deixar ver os blocos. A mesma fun\u00e7\u00e3o mostra as pistas, a partir do <code>matriz()</code> do grupo, em que os zeros s\u00e3o as c\u00e9lulas por preencher.\n\"\\\"\")</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "NRjv",
+      "code_hash": "3ed2e17746fdbf55db63f5fa3ce6bfe5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "jUFY",
+      "code_hash": "398d1cbd4897c4573036cf3ba2fd912d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "{(2, 2): 8, (5, 3): 7, (4, 3): 8}\nNone\nPistas:\n 0  0  0 |  4  0  9 |  0  0  0 \n 0  0  0 |  0  0  0 |  0  0  0 \n 0  0  0 |  0  0  0 |  0  0  0 \n-------------------------------\n 0  0  0 |  0  0  0 |  0  0  0 \n 0  0  0 |  0  0  0 |  0  0  0 \n 0  0  0 |  0  0  0 |  0  0  0 \n-------------------------------\n 0  0  0 |  0  0  0 |  0  0  0 \n 6  0  0 |  0  0  0 |  0  0  0 \n 0  0  0 |  0  0  0 |  0  0  0 \n\nSolu\u00e7\u00e3o:\n 3  1  8 |  4  6  9 |  7  5  2 \n 4  5  7 |  1  2  8 |  3  6  9 \n 2  6  9 |  5  3  7 |  4  1  8 \n-------------------------------\n 7  3  4 |  2  8  6 |  1  9  5 \n 5  2  1 |  3  9  4 |  8  7  6 \n 8  9  6 |  7  1  5 |  2  3  4 \n-------------------------------\n 1  4  3 |  6  5  2 |  9  8  7 \n 6  8  2 |  9  7  1 |  5  4  3 \n 9  7  5 |  8  4  3 |  6  2  1 \n",
           "mimetype": "text/plain"
         }
       ]
