@@ -2,7 +2,7 @@
   "version": "1",
   "metadata": {
     "marimo_version": "0.25.0",
-    "script_metadata_hash": "cdac4f193ea60f385129ed849f93ec6c"
+    "script_metadata_hash": "dd1e7c62eaf7480e17a2a36a853d7fd4"
   },
   "cells": [
     {
@@ -21,17 +21,24 @@
     {
       "id": "MJUe",
       "code_hash": "20e5d46aa1a2705d81f58523e248a76e",
-      "outputs": [],
-      "console": []
-    },
-    {
-      "id": "vblA",
-      "code_hash": "585c573c08b470e8ada78e07309ef85b",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"2-leitura-e-preparacao-dos-dados-r8\">2. Leitura e Prepara\u00e7\u00e3o dos Dados (R8)</h2>\n<span class=\"paragraph\">Os dados de entrada s\u00e3o lidos diretamente dos ficheiros CSV (<code>turmas.csv</code>, <code>disciplinas.csv</code>, <code>salas.csv</code> e <code>disponibilidade_excecoes.csv</code>), garantindo a total aus\u00eancia de dados fixos (<em>hardcoded</em>) no c\u00f3digo.</span>\n<span class=\"paragraph\">A leitura \u00e9 dividida em duas fun\u00e7\u00f5es:</span>\n<ul>\n<li><strong><code>ler_csv_validado</code></strong>: Uma fun\u00e7\u00e3o utilit\u00e1ria e gen\u00e9rica que abre qualquer CSV com <code>csv.DictReader</code>, valida se os cabe\u00e7alhos obrigat\u00f3rios existem e devolve o texto limpo.</li>\n<li><strong><code>carregar_dados</code></strong>: Orquestra o carregamento dos quatro ficheiros e converte os valores em tipos nativos de Python (inteiros para a carga hor\u00e1ria e capacidades, booleanos para duplos per\u00edodos, etc.).</li>\n</ul>\n<span class=\"paragraph\">A semana letiva \u00e9 composta por 5 dias (<code>Seg</code> a <code>Sex</code>), com 5 tempos letivos di\u00e1rios (per\u00edodos 1 a 5).</span></span>"
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "5c5957eb596b342e57b2d2f4130a424a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"2-leitura-e-preparacao-dos-dados-r8\">2. Leitura e Prepara\u00e7\u00e3o dos Dados (R8)</h2>\n<span class=\"paragraph\">Os dados de entrada s\u00e3o lidos diretamente dos ficheiros CSV (<code>turmas.csv</code>, <code>disciplinas.csv</code>, <code>salas.csv</code> e <code>disponibilidade_excecoes.csv</code>), garantindo a total aus\u00eancia de dados fixos (<em>hardcoded</em>) no c\u00f3digo.</span>\n<span class=\"paragraph\">A leitura \u00e9 dividida em duas fun\u00e7\u00f5es:</span>\n<ul>\n<li><strong><code>_ler_csv_com_validacao</code></strong>: Uma fun\u00e7\u00e3o utilit\u00e1ria e gen\u00e9rica que abre qualquer CSV com <code>csv.DictReader</code>, valida se os cabe\u00e7alhos obrigat\u00f3rios existem e devolve o texto limpo.</li>\n<li><strong><code>carregar_dados</code></strong>: Orquestra o carregamento dos quatro ficheiros e converte os valores em tipos nativos de Python (inteiros para a carga hor\u00e1ria e capacidades, booleanos para duplos per\u00edodos, etc.).</li>\n</ul>\n<span class=\"paragraph\">A semana letiva \u00e9 composta por 5 dias (<code>Seg</code> a <code>Sex</code>), com 5 tempos letivos di\u00e1rios (per\u00edodos 1 a 5).</span></span>"
           }
         }
       ],
@@ -39,50 +46,610 @@
     },
     {
       "id": "bkHC",
-      "code_hash": "d29e25cc05cee0792c08f71c40b5bbe9",
-      "outputs": [],
+      "code_hash": "37b8d036afd5d1749fe514884de664c2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
       "console": []
     },
     {
       "id": "lEQa",
-      "code_hash": "e13a1c950509a9382b68546ce1908a09",
-      "outputs": [],
+      "code_hash": "5ec814df903d0933b5903e90325868a6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"3-modelo-cp-sat\">3. Modelo CP-SAT</h2>\n<h3 id=\"variaveis-de-decisao\">Vari\u00e1veis de decis\u00e3o</h3>\n<span class=\"paragraph\">Para cada turma <marimo-tex class=\"arithmatex\">||(t||)</marimo-tex>, disciplina <marimo-tex class=\"arithmatex\">||(d||)</marimo-tex>, dia <marimo-tex class=\"arithmatex\">||(dia||)</marimo-tex> e per\u00edodo <marimo-tex class=\"arithmatex\">||(p||)</marimo-tex> existe uma vari\u00e1vel booleana:</span>\n<marimo-tex class=\"arithmatex\">||[x_{t,d,dia,p} \\in \\{0,1\\}||]</marimo-tex><span class=\"paragraph\">que vale 1 se a turma <marimo-tex class=\"arithmatex\">||(t||)</marimo-tex> tem aula da disciplina <marimo-tex class=\"arithmatex\">||(d||)</marimo-tex> nesse dia e nesse per\u00edodo, e 0 caso contr\u00e1rio. Como cada disciplina tem um \u00fanico professor, a vari\u00e1vel determina tamb\u00e9m o professor que d\u00e1 a aula.</span></span>"
+          }
+        }
+      ],
       "console": []
     },
     {
       "id": "PKri",
-      "code_hash": "22cc50b02546fe3ecd6fd2965375cb9e",
-      "outputs": [],
+      "code_hash": "cb9148edc9ae9cc4914120094eccfa54",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
       "console": []
     },
     {
       "id": "Xref",
-      "code_hash": "09e616a113ae3d60de0c3357b1ab4271",
-      "outputs": [],
+      "code_hash": "0877dbccb7bc5cd83a041d6f51cd08db",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"r1-uma-turma-nao-pode-ter-duas-aulas-em-simultaneo\">R1: uma turma n\u00e3o pode ter duas aulas em simult\u00e2neo</h3>\n<span class=\"paragraph\">Para cada turma, dia e per\u00edodo, a soma das vari\u00e1veis de todas as disciplinas \u00e9 no m\u00e1ximo 1:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall t,\\ dia,\\ p: \\quad \\sum_{d} x_{t,d,dia,p} \\le 1||]</marimo-tex></span>"
+          }
+        }
+      ],
       "console": []
     },
     {
       "id": "SFPL",
-      "code_hash": "de48b0cebe1143e27e80b66d763d8ccb",
-      "outputs": [],
+      "code_hash": "cb3d808a557216021e48e5de9a864373",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
       "console": []
     },
     {
       "id": "BYtC",
-      "code_hash": "9e5d78ac6a3c4be89b9f9cc3dcc20490",
-      "outputs": [],
+      "code_hash": "e5cdc2a988dc4c7942133aa4387dce29",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"r2-cada-disciplina-cumpre-exatamente-a-carga-semanal\">R2: cada disciplina cumpre exatamente a carga semanal</h3>\n<span class=\"paragraph\">Para cada turma e disciplina, o n\u00famero total de tempos atribu\u00eddos na semana \u00e9 igual \u00e0 carga semanal <marimo-tex class=\"arithmatex\">||(c_d||)</marimo-tex> lida de <code>disciplinas.csv</code>:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall t,\\ d: \\quad \\sum_{dia} \\sum_{p} x_{t,d,dia,p} = c_d||]</marimo-tex></span>"
+          }
+        }
+      ],
       "console": []
     },
     {
       "id": "RGSE",
-      "code_hash": "4194a217bd8a0ad7519f1edbdbb942cf",
-      "outputs": [],
+      "code_hash": "c818a0f2ddd8e09ece0cf7fd416073b0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
       "console": []
     },
     {
       "id": "Kclp",
-      "code_hash": "ac2ceffb91f9de53fb5d25131806a70b",
-      "outputs": [],
+      "code_hash": "91b84887e853a21a7f02886e6521b0dd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"r3-e-r4-uma-aula-por-dia-e-blocos-de-duplo-periodo\">R3 e R4: uma aula por dia e blocos de duplo per\u00edodo</h3>\n<span class=\"paragraph\">As duas restri\u00e7\u00f5es ficam juntas porque partilham as vari\u00e1veis auxiliares dos blocos.</span>\n<span class=\"paragraph\"><strong>Disciplinas normais (R3)</strong>: no m\u00e1ximo uma aula por dia, por turma:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall t,\\ d,\\ dia: \\quad \\sum_{p} x_{t,d,dia,p} \\le 1||]</marimo-tex><span class=\"paragraph\"><strong>Disciplinas com <code>duplo_periodo=sim</code> (R3 e R4)</strong>: para cada turma, disciplina e dia cria-se uma vari\u00e1vel booleana <marimo-tex class=\"arithmatex\">||(b_{t,d,dia,p}||)</marimo-tex>, com <marimo-tex class=\"arithmatex\">||(p \\in \\{1,2,3,4\\}||)</marimo-tex>, que vale 1 se um bloco de 2 tempos come\u00e7a no per\u00edodo <marimo-tex class=\"arithmatex\">||(p||)</marimo-tex> (ocupando <marimo-tex class=\"arithmatex\">||(p||)</marimo-tex> e <marimo-tex class=\"arithmatex\">||(p+1||)</marimo-tex>).</span>\n<span class=\"paragraph\">No m\u00e1ximo um bloco por dia (R3):</span>\n<marimo-tex class=\"arithmatex\">||[\\sum_{p=1}^{4} b_{t,d,dia,p} \\le 1||]</marimo-tex><span class=\"paragraph\">Um tempo s\u00f3 tem aula se pertencer a um bloco (R4), ou seja, se o bloco come\u00e7ou nesse per\u00edodo ou no anterior:</span>\n<marimo-tex class=\"arithmatex\">||[x_{t,d,dia,p} = b_{t,d,dia,p-1} + b_{t,d,dia,p} \\qquad \\text{com } b_{t,d,dia,0} = b_{t,d,dia,5} = 0||]</marimo-tex><span class=\"paragraph\">Assim nunca existe um tempo isolado: a disciplina tem 0 ou 2 tempos consecutivos em cada dia.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "ee72494966d40c964d73d684df0d569c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "8b91bab6ce8b789ed49f95ff8e29bee9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"r5-e-r6-professores\">R5 e R6: professores</h3>\n<span class=\"paragraph\">As duas restri\u00e7\u00f5es ficam juntas porque partilham o dicion\u00e1rio <code>disciplinas_prof</code>, que associa cada professor ao conjunto <marimo-tex class=\"arithmatex\">||(D_{prof}||)</marimo-tex> das disciplinas que leciona.</span>\n<span class=\"paragraph\"><strong>R5: um professor n\u00e3o pode dar duas aulas em simult\u00e2neo.</strong> Em cada dia e per\u00edodo, a soma das aulas de todas as suas disciplinas, em todas as turmas, \u00e9 no m\u00e1ximo 1:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall prof,\\ dia,\\ p: \\quad \\sum_{t} \\sum_{d \\in D_{prof}} x_{t,d,dia,p} \\le 1||]</marimo-tex><span class=\"paragraph\"><strong>R6: um professor s\u00f3 d\u00e1 aulas quando est\u00e1 dispon\u00edvel.</strong> Sendo <marimo-tex class=\"arithmatex\">||(I||)</marimo-tex> o conjunto de indisponibilidades lido de <code>disponibilidade_excecoes.csv</code>, as vari\u00e1veis correspondentes s\u00e3o for\u00e7adas a 0:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall (prof, dia, p) \\in I,\\ \\forall t,\\ \\forall d \\in D_{prof}: \\quad x_{t,d,dia,p} = 0||]</marimo-tex></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "9d36d266a9b6b00c911c02363ebefe26",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "4e81343855c672747bbe29ae79038cbd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"r7-capacidade-das-salas\">R7: capacidade das salas</h3>\n<span class=\"paragraph\">As disciplinas s\u00e3o separadas pelo tipo de sala que ocupam: <marimo-tex class=\"arithmatex\">||(D_s||)</marimo-tex> \u00e9 o conjunto das disciplinas que usam a sala especial <marimo-tex class=\"arithmatex\">||(s||)</marimo-tex> e <marimo-tex class=\"arithmatex\">||(D_{normal}||)</marimo-tex> o das restantes. Em cada dia e per\u00edodo, o n\u00famero de aulas a decorrer em cada tipo de sala n\u00e3o pode exceder a <code>quantidade</code> <marimo-tex class=\"arithmatex\">||(q||)</marimo-tex> definida em <code>salas.csv</code>.</span>\n<span class=\"paragraph\">Para cada sala especial <marimo-tex class=\"arithmatex\">||(s||)</marimo-tex>:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall dia,\\ p: \\quad \\sum_{t} \\sum_{d \\in D_s} x_{t,d,dia,p} \\le q_s||]</marimo-tex><span class=\"paragraph\">Para as salas normais:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall dia,\\ p: \\quad \\sum_{t} \\sum_{d \\in D_{normal}} x_{t,d,dia,p} \\le q_{normal}||]</marimo-tex><span class=\"paragraph\"><strong>Limita\u00e7\u00e3o.</strong> O modelo conta as salas por tipo e n\u00e3o atribui uma sala concreta a cada aula. Por isso, na constru\u00e7\u00e3o incremental s\u00f3 se medem mudan\u00e7as de tempo, e n\u00e3o mudan\u00e7as de sala.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "0b2826dff8ebc2763bddf9736327a1d5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "db11e983ec580385f230fef7a841f485",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"o1-minimizar-os-buracos-nos-horarios-dos-professores\">O1: minimizar os buracos nos hor\u00e1rios dos professores</h3>\n<span class=\"paragraph\">Um buraco \u00e9 um tempo livre de um professor, no meio do dia, entre a sua primeira e a sua \u00faltima aula desse dia.</span>\n<span class=\"paragraph\"><strong>Ocupa\u00e7\u00e3o do professor.</strong> Num dado dia e per\u00edodo, o professor est\u00e1 ocupado se alguma turma tem aula de uma das suas disciplinas. Pela R5 esta soma vale 0 ou 1:</span>\n<marimo-tex class=\"arithmatex\">||[o_{prof,dia,p} = \\sum_{t} \\sum_{d \\in D_{prof}} x_{t,d,dia,p}||]</marimo-tex><span class=\"paragraph\"><strong>Vari\u00e1veis auxiliares.</strong> Para cada professor, dia e per\u00edodo criam-se tr\u00eas booleanas:</span>\n<ul>\n<li><marimo-tex class=\"arithmatex\">||(a_{prof,dia,p}||)</marimo-tex> (<code>antes</code>): o professor j\u00e1 deu alguma aula nesse dia, no per\u00edodo <marimo-tex class=\"arithmatex\">||(p||)</marimo-tex> ou antes;</li>\n<li><marimo-tex class=\"arithmatex\">||(d_{prof,dia,p}||)</marimo-tex> (<code>depois</code>): o professor ainda d\u00e1 alguma aula nesse dia, no per\u00edodo <marimo-tex class=\"arithmatex\">||(p||)</marimo-tex> ou depois;</li>\n<li><marimo-tex class=\"arithmatex\">||(b_{prof,dia,p}||)</marimo-tex> (<code>buraco</code>): o per\u00edodo <marimo-tex class=\"arithmatex\">||(p||)</marimo-tex> \u00e9 um buraco.</li>\n</ul>\n<span class=\"paragraph\"><strong>Restri\u00e7\u00f5es.</strong> Omitindo os \u00edndices <marimo-tex class=\"arithmatex\">||(prof||)</marimo-tex> e <marimo-tex class=\"arithmatex\">||(dia||)</marimo-tex>:</span>\n<marimo-tex class=\"arithmatex\">||[a_p \\ge o_p \\qquad a_p \\ge a_{p-1}||]</marimo-tex><marimo-tex class=\"arithmatex\">||[d_p \\ge o_p \\qquad d_p \\ge d_{p+1}||]</marimo-tex><marimo-tex class=\"arithmatex\">||[b_p \\ge a_p + d_p - 1 - o_p||]</marimo-tex><span class=\"paragraph\">Um per\u00edodo \u00e9 buraco quando h\u00e1 aulas antes, h\u00e1 aulas depois e o professor est\u00e1 livre. Exemplo com aulas nos per\u00edodos 1, 2 e 4:</span>\n<table>\n<thead>\n<tr>\n<th>per\u00edodo</th>\n<th>1</th>\n<th>2</th>\n<th>3</th>\n<th>4</th>\n<th>5</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>ocupado</td>\n<td>1</td>\n<td>1</td>\n<td>0</td>\n<td>1</td>\n<td>0</td>\n</tr>\n<tr>\n<td>antes</td>\n<td>1</td>\n<td>1</td>\n<td>1</td>\n<td>1</td>\n<td>1</td>\n</tr>\n<tr>\n<td>depois</td>\n<td>1</td>\n<td>1</td>\n<td>1</td>\n<td>1</td>\n<td>0</td>\n</tr>\n<tr>\n<td>antes + depois \u2212 1 \u2212 ocupado</td>\n<td>0</td>\n<td>0</td>\n<td>1</td>\n<td>0</td>\n<td>0</td>\n</tr>\n</tbody>\n</table>\n<span class=\"paragraph\">O \u00fanico buraco \u00e9 o per\u00edodo 3. O per\u00edodo 5 tamb\u00e9m est\u00e1 livre, mas <code>depois</code> j\u00e1 \u00e9 0, por isso n\u00e3o conta.</span>\n<span class=\"paragraph\"><strong>Objetivo.</strong> A fun\u00e7\u00e3o devolve a soma de todos os buracos, que o <code>resolver</code> minimiza:</span>\n<marimo-tex class=\"arithmatex\">||[\\min \\sum_{prof} \\sum_{dia} \\sum_{p} b_{prof,dia,p}||]</marimo-tex><span class=\"paragraph\">As restri\u00e7\u00f5es s\u00e3o todas do tipo <marimo-tex class=\"arithmatex\">||(\\ge||)</marimo-tex>: s\u00f3 obrigam as vari\u00e1veis a subir para 1 quando \u00e9 preciso. Quem as faz descer \u00e9 o objetivo, porque ao minimizar a soma o solver nunca marca um buraco que n\u00e3o exista.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "qnkX",
+      "code_hash": "629b40860f203692a9900390c571226b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TqIu",
+      "code_hash": "c6d21a1604545a734791755d07e1bda3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"construcao-do-modelo\">Constru\u00e7\u00e3o do modelo</h3>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>construir_modelo</code> cria um modelo novo, as vari\u00e1veis de decis\u00e3o e aplica as restri\u00e7\u00f5es R1 a R7 pela ordem acima.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Vxnm",
+      "code_hash": "4cdc522dcfd5656c09c5e6a1f32e27ea",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "DnEU",
+      "code_hash": "df9668c5ea80a2e25eeadc49ea2c86af",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"4-resolucao-e-construcao-incremental-r9\">4. Resolu\u00e7\u00e3o e constru\u00e7\u00e3o incremental (R9)</h2>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>resolver(dados, base=None)</code> constr\u00f3i o modelo, resolve-o e devolve o hor\u00e1rio como um conjunto de tuplos <code>(turma, disciplina, dia, periodo)</code>, juntamente com o tempo de resolu\u00e7\u00e3o.</span>\n<span class=\"paragraph\"><strong>Sem hor\u00e1rio base</strong> (<code>base=None</code>): o problema \u00e9 resolvido do zero, com as restri\u00e7\u00f5es R1 a R7 e o objetivo O1 (minimizar os buracos dos professores, com <code>total_buracos</code>).</span>\n<span class=\"paragraph\"><strong>Com hor\u00e1rio base</strong> (<code>base=H0</code>): a resolu\u00e7\u00e3o \u00e9 incremental e reaproveita o hor\u00e1rio anterior de duas formas:</span>\n<ul>\n<li><strong>Hint</strong>: para as aulas que j\u00e1 existiam em <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex>, sugere-se ao solver o valor que cada vari\u00e1vel tinha (<code>AddHint</code>), para a procura come\u00e7ar perto do hor\u00e1rio anterior.</li>\n<li><strong>Objetivo</strong>: minimiza-se o n\u00famero de aulas de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> que deixam de estar no mesmo tempo. Cada parcela <marimo-tex class=\"arithmatex\">||((1 - x)||)</marimo-tex> vale 0 se a aula fica onde estava e 1 se muda:</li>\n</ul>\n<marimo-tex class=\"arithmatex\">||[\\min \\sum_{(t,d,dia,p) \\in H_0} \\left(1 - x_{t,d,dia,p}\\right)||]</marimo-tex><span class=\"paragraph\">S\u00f3 entram na soma as aulas de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> que ainda existem nos dados novos, para a mesma fun\u00e7\u00e3o servir quando h\u00e1 turmas ou disciplinas novas.</span>\n<span class=\"paragraph\">Optou-se por hint e objetivo em vez de fixar as aulas n\u00e3o afetadas, que \u00e9 a outra t\u00e9cnica sugerida no enunciado, porque fixar pode tornar o problema imposs\u00edvel quando a altera\u00e7\u00e3o obriga a mexer numa aula que parecia n\u00e3o afetada. Com o objetivo, todas as aulas podem mudar se for preciso, mas cada mudan\u00e7a tem um custo.</span>\n<span class=\"paragraph\">Um modelo s\u00f3 pode ter um objetivo, por isso cada caminho tem o seu: O1 na resolu\u00e7\u00e3o do zero e o n\u00famero de aulas alteradas na incremental. O enunciado n\u00e3o exige que <marimo-tex class=\"arithmatex\">||(H_1||)</marimo-tex> seja \u00f3timo em rela\u00e7\u00e3o a O1.</span>\n<span class=\"paragraph\">O solver tem um limite de 30 segundos. Se n\u00e3o encontrar solu\u00e7\u00e3o (modelo invi\u00e1vel ou tempo esgotado), a fun\u00e7\u00e3o devolve <code>None</code> no lugar do hor\u00e1rio.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ulZA",
+      "code_hash": "5b8fbe4e0fe171f68be21dacff971722",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ecfG",
+      "code_hash": "f3025f81ddb3bd32f9a90e712d94adb7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"5-apresentacao-do-horario\">5. Apresenta\u00e7\u00e3o do hor\u00e1rio</h2>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>mostrar_horario(dados, horario, titulo)</code> imprime uma grelha por turma, com os dias nas colunas e os per\u00edodos nas linhas. Cada c\u00e9lula mostra a disciplina e o professor, ou <code>---</code> se a turma n\u00e3o tem aula nesse tempo.</span>\n<span class=\"paragraph\">Se o hor\u00e1rio for <code>None</code>, \u00e9 mostrada uma mensagem de erro em vez da grelha.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Pvdt",
+      "code_hash": "09e616a113ae3d60de0c3357b1ab4271",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZBYS",
+      "code_hash": "f091f48c17045b0b0c02fb8d586be8b0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"contagem-de-buracos\">Contagem de buracos</h3>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>contar_buracos(dados, horario)</code> conta os buracos diretamente num hor\u00e1rio j\u00e1 resolvido, sem usar o solver: para cada professor e dia, procura os per\u00edodos livres entre a primeira e a \u00faltima aula. Serve para verificar o valor de O1 de forma independente do modelo.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "aLJB",
+      "code_hash": "0d6dbc3b1f713f04d7c42e19111d11ee",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nHfw",
+      "code_hash": "5a98b8c630e5f4f1fefb2f0ab70e5fea",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"verificacao-automatica-das-restricoes\">Verifica\u00e7\u00e3o autom\u00e1tica das restri\u00e7\u00f5es</h3>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>verificar_horario(dados, horario)</code> confirma, diretamente sobre um hor\u00e1rio j\u00e1 resolvido e sem usar o solver, que as restri\u00e7\u00f5es R1 a R7 s\u00e3o respeitadas, e devolve a lista das que falharam (vazia se estiver tudo certo). A R8 fica de fora porque diz respeito \u00e0 leitura dos dados a partir dos ficheiros CSV, e n\u00e3o ao hor\u00e1rio gerado.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "xXTn",
+      "code_hash": "5e740dff2dbeaac6833d90e216cbf77b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "AjVT",
+      "code_hash": "37e952ef77e1966715c457703bab5555",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"6-testes\">6. Testes</h2>\n<h3 id=\"h0-horario-inicial\">H0: hor\u00e1rio inicial</h3>\n<span class=\"paragraph\">Hor\u00e1rio gerado do zero a partir dos dados iniciais (<code>dados/</code>). Serve de base para as constru\u00e7\u00f5es incrementais seguintes.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "pHFh",
+      "code_hash": "de48b0cebe1143e27e80b66d763d8ccb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "=== H0: solu\u00e7\u00e3o encontrada com sucesso! ===\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL H0: TURMA 7\u00baA\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |     Portugu\u00eas (Prof. Bruno)      |               ---                |               ---                |               ---                |\n 2\u00ba Per\u00edodo |       Ingl\u00eas (Prof. Diana)       |      Ci\u00eancias (Prof. Carla)      |               ---                |               ---                |               ---                |\n 3\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      |       Ingl\u00eas (Prof. Diana)       |     Portugu\u00eas (Prof. Bruno)      |     Portugu\u00eas (Prof. Bruno)      |               ---                |\n 4\u00ba Per\u00edodo | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Hist\u00f3ria (Prof. Diana)      |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |      Hist\u00f3ria (Prof. Diana)      |\n 5\u00ba Per\u00edodo | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Matem\u00e1tica (Prof. Ana)      |      Matem\u00e1tica (Prof. Ana)      |               ---                |      Matem\u00e1tica (Prof. Ana)      |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL H0: TURMA 7\u00baB\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |               ---                |      Matem\u00e1tica (Prof. Ana)      |      Ci\u00eancias (Prof. Carla)      |\n 2\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |       Ingl\u00eas (Prof. Diana)       |     Portugu\u00eas (Prof. Bruno)      |     Portugu\u00eas (Prof. Bruno)      |               ---                |\n 3\u00ba Per\u00edodo |      Hist\u00f3ria (Prof. Diana)      |               ---                |               ---                |               ---                |      Hist\u00f3ria (Prof. Diana)      |\n 4\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Matem\u00e1tica (Prof. Ana)      |       Ingl\u00eas (Prof. Diana)       |      Matem\u00e1tica (Prof. Ana)      |\n 5\u00ba Per\u00edodo |               ---                | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |               ---                |               ---                |     Portugu\u00eas (Prof. Bruno)      |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "NCOB",
+      "code_hash": "21a2c1d9de989a9ab073433728b3a756",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"h1-resolvido-do-zero\">H1 resolvido do zero</h3>\n<span class=\"paragraph\">Os dados de <code>dados_v2/</code> s\u00e3o iguais aos iniciais, exceto que a Prof. Ana passa a estar indispon\u00edvel \u00e0 sexta-feira nos 2 \u00faltimos tempos. Aqui o problema \u00e9 resolvido do zero, sem usar <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex>, para servir de termo de compara\u00e7\u00e3o.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "aqbW",
+      "code_hash": "9e5d78ac6a3c4be89b9f9cc3dcc20490",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "=== H1 do zero: solu\u00e7\u00e3o encontrada com sucesso! ===\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL H1 do zero: TURMA 7\u00baA\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |               ---                |      Matem\u00e1tica (Prof. Ana)      |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |\n 2\u00ba Per\u00edodo |       Ingl\u00eas (Prof. Diana)       |     Portugu\u00eas (Prof. Bruno)      |     Portugu\u00eas (Prof. Bruno)      |               ---                |               ---                |\n 3\u00ba Per\u00edodo |      Hist\u00f3ria (Prof. Diana)      |       Ingl\u00eas (Prof. Diana)       |               ---                |               ---                |      Matem\u00e1tica (Prof. Ana)      |\n 4\u00ba Per\u00edodo |               ---                |      Hist\u00f3ria (Prof. Diana)      |      Ci\u00eancias (Prof. Carla)      |      Matem\u00e1tica (Prof. Ana)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |\n 5\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      |               ---                |               ---                |     Portugu\u00eas (Prof. Bruno)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL H1 do zero: TURMA 7\u00baB\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |               ---                |     Portugu\u00eas (Prof. Bruno)      |     Portugu\u00eas (Prof. Bruno)      |               ---                |               ---                |\n 2\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |      Hist\u00f3ria (Prof. Diana)      |      Matem\u00e1tica (Prof. Ana)      |               ---                |               ---                |\n 3\u00ba Per\u00edodo |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |               ---                |               ---                |\n 4\u00ba Per\u00edodo |      Hist\u00f3ria (Prof. Diana)      |      Matem\u00e1tica (Prof. Ana)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |     Portugu\u00eas (Prof. Bruno)      |     Portugu\u00eas (Prof. Bruno)      |\n 5\u00ba Per\u00edodo |       Ingl\u00eas (Prof. Diana)       |       Ingl\u00eas (Prof. Diana)       | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Matem\u00e1tica (Prof. Ana)      |               ---                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "TRpd",
+      "code_hash": "cdcecbc6973dbbf5a6d534de0441218f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"h1-incremental\">H1 incremental</h3>\n<span class=\"paragraph\">O mesmo problema de <code>dados_v2/</code>, mas resolvido a partir de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> (<code>base=h0</code>): o solver recebe o hor\u00e1rio anterior como hint e minimiza o n\u00famero de aulas que mudam.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TXez",
+      "code_hash": "4194a217bd8a0ad7519f1edbdbb942cf",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "=== H1 incremental: solu\u00e7\u00e3o encontrada com sucesso! ===\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL H1 incremental: TURMA 7\u00baA\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |     Portugu\u00eas (Prof. Bruno)      |               ---                |               ---                |               ---                |\n 2\u00ba Per\u00edodo |       Ingl\u00eas (Prof. Diana)       |      Ci\u00eancias (Prof. Carla)      |               ---                |               ---                |               ---                |\n 3\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      |       Ingl\u00eas (Prof. Diana)       |     Portugu\u00eas (Prof. Bruno)      |     Portugu\u00eas (Prof. Bruno)      |      Matem\u00e1tica (Prof. Ana)      |\n 4\u00ba Per\u00edodo | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Hist\u00f3ria (Prof. Diana)      |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |      Hist\u00f3ria (Prof. Diana)      |\n 5\u00ba Per\u00edodo | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Matem\u00e1tica (Prof. Ana)      |      Matem\u00e1tica (Prof. Ana)      |               ---                |               ---                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL H1 incremental: TURMA 7\u00baB\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |               ---                |      Matem\u00e1tica (Prof. Ana)      |      Ci\u00eancias (Prof. Carla)      |\n 2\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |       Ingl\u00eas (Prof. Diana)       |     Portugu\u00eas (Prof. Bruno)      |     Portugu\u00eas (Prof. Bruno)      |      Matem\u00e1tica (Prof. Ana)      |\n 3\u00ba Per\u00edodo |      Hist\u00f3ria (Prof. Diana)      |               ---                |               ---                |               ---                |      Hist\u00f3ria (Prof. Diana)      |\n 4\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Matem\u00e1tica (Prof. Ana)      |       Ingl\u00eas (Prof. Diana)       |               ---                |\n 5\u00ba Per\u00edodo |               ---                | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |               ---                |               ---                |     Portugu\u00eas (Prof. Bruno)      |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "dNNg",
+      "code_hash": "ab8a048f6e5225d841299fa7b0171425",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"cenario-v3-resolvido-do-zero\">Cen\u00e1rio v3 resolvido do zero</h3>\n<span class=\"paragraph\">O conjunto <code>dados_v3/</code> \u00e9 um teste com dados diferentes dos fornecidos, que junta v\u00e1rias altera\u00e7\u00f5es de recursos em rela\u00e7\u00e3o a <code>dados/</code>:</span>\n<ul>\n<li>uma turma nova (<code>7\u00baC</code>);</li>\n<li>uma disciplina nova (Geografia, Prof. F\u00e1bio);</li>\n<li>um professor substitu\u00eddo na mesma disciplina (Ingl\u00eas passa da Prof. Diana para a Prof. Gabriela);</li>\n<li>menos salas normais dispon\u00edveis (de 6 para 2);</li>\n<li>o Prof. Bruno indispon\u00edvel \u00e0 quarta-feira em todos os tempos.</li>\n</ul>\n<span class=\"paragraph\">Aqui o problema \u00e9 resolvido do zero, sem usar <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "yCnT",
+      "code_hash": "fb0430006a38238ef6852a0c55421395",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "=== v3 do zero: solu\u00e7\u00e3o encontrada com sucesso! ===\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL v3 do zero: TURMA 7\u00baA\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |               ---                |               ---                |     Geografia (Prof. F\u00e1bio)      |               ---                |      Matem\u00e1tica (Prof. Ana)      |\n 2\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      |      Hist\u00f3ria (Prof. Diana)      |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |               ---                |\n 3\u00ba Per\u00edodo |      Ci\u00eancias (Prof. Carla)      |      Matem\u00e1tica (Prof. Ana)      |      Matem\u00e1tica (Prof. Ana)      |     Geografia (Prof. F\u00e1bio)      |     Portugu\u00eas (Prof. Bruno)      |\n 4\u00ba Per\u00edodo |      Hist\u00f3ria (Prof. Diana)      |     Portugu\u00eas (Prof. Bruno)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |     Portugu\u00eas (Prof. Bruno)      |               ---                |\n 5\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |               ---                | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |     Ingl\u00eas (Prof. Gabriela)      |     Ingl\u00eas (Prof. Gabriela)      |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL v3 do zero: TURMA 7\u00baB\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |               ---                |               ---                |      Matem\u00e1tica (Prof. Ana)      |      Matem\u00e1tica (Prof. Ana)      |     Portugu\u00eas (Prof. Bruno)      |\n 2\u00ba Per\u00edodo |               ---                |      Ci\u00eancias (Prof. Carla)      |     Geografia (Prof. F\u00e1bio)      |     Geografia (Prof. F\u00e1bio)      |      Matem\u00e1tica (Prof. Ana)      |\n 3\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      |     Portugu\u00eas (Prof. Bruno)      |      Hist\u00f3ria (Prof. Diana)      |     Portugu\u00eas (Prof. Bruno)      |      Ci\u00eancias (Prof. Carla)      |\n 4\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |               ---                |      Ci\u00eancias (Prof. Carla)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |     Ingl\u00eas (Prof. Gabriela)      |\n 5\u00ba Per\u00edodo |               ---                |     Ingl\u00eas (Prof. Gabriela)      |               ---                | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Hist\u00f3ria (Prof. Diana)      |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL v3 do zero: TURMA 7\u00baC\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      |               ---                |               ---                |               ---                |               ---                |\n 2\u00ba Per\u00edodo |     Ingl\u00eas (Prof. Gabriela)      |               ---                |      Matem\u00e1tica (Prof. Ana)      |      Matem\u00e1tica (Prof. Ana)      |     Portugu\u00eas (Prof. Bruno)      |\n 3\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |               ---                |     Geografia (Prof. F\u00e1bio)      |\n 4\u00ba Per\u00edodo |      Ci\u00eancias (Prof. Carla)      |      Matem\u00e1tica (Prof. Ana)      |      Hist\u00f3ria (Prof. Diana)      |     Geografia (Prof. F\u00e1bio)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |\n 5\u00ba Per\u00edodo |      Hist\u00f3ria (Prof. Diana)      |     Portugu\u00eas (Prof. Bruno)      |     Ingl\u00eas (Prof. Gabriela)      |     Portugu\u00eas (Prof. Bruno)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "wlCL",
+      "code_hash": "da54330e4ab7984ad23cafd16cd6a791",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"cenario-v3-incremental\">Cen\u00e1rio v3 incremental</h3>\n<span class=\"paragraph\">O mesmo cen\u00e1rio de <code>dados_v3/</code>, resolvido a partir de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex>. As aulas da turma nova e da disciplina nova n\u00e3o existem em <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex>, por isso n\u00e3o entram no objetivo nem recebem hint: o solver \u00e9 livre de as colocar onde couberem.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "kqZH",
+      "code_hash": "4260255a18a8211a567ec5c198b8fbfe",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "=== v3 incremental: solu\u00e7\u00e3o encontrada com sucesso! ===\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL v3 incremental: TURMA 7\u00baA\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |     Portugu\u00eas (Prof. Bruno)      |               ---                |               ---                |     Portugu\u00eas (Prof. Bruno)      |\n 2\u00ba Per\u00edodo |     Ingl\u00eas (Prof. Gabriela)      |      Ci\u00eancias (Prof. Carla)      |     Geografia (Prof. F\u00e1bio)      |     Geografia (Prof. F\u00e1bio)      |               ---                |\n 3\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      |     Ingl\u00eas (Prof. Gabriela)      |               ---                |     Portugu\u00eas (Prof. Bruno)      |               ---                |\n 4\u00ba Per\u00edodo | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Hist\u00f3ria (Prof. Diana)      |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |      Hist\u00f3ria (Prof. Diana)      |\n 5\u00ba Per\u00edodo | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Matem\u00e1tica (Prof. Ana)      |      Matem\u00e1tica (Prof. Ana)      |               ---                |      Matem\u00e1tica (Prof. Ana)      |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL v3 incremental: TURMA 7\u00baB\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |               ---                |      Matem\u00e1tica (Prof. Ana)      |      Ci\u00eancias (Prof. Carla)      |\n 2\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |     Ingl\u00eas (Prof. Gabriela)      |               ---                |     Portugu\u00eas (Prof. Bruno)      |               ---                |\n 3\u00ba Per\u00edodo |      Hist\u00f3ria (Prof. Diana)      |     Portugu\u00eas (Prof. Bruno)      |               ---                |               ---                |      Hist\u00f3ria (Prof. Diana)      |\n 4\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |      Matem\u00e1tica (Prof. Ana)      |     Ingl\u00eas (Prof. Gabriela)      |      Matem\u00e1tica (Prof. Ana)      |\n 5\u00ba Per\u00edodo |     Geografia (Prof. F\u00e1bio)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |               ---                |     Geografia (Prof. F\u00e1bio)      |     Portugu\u00eas (Prof. Bruno)      |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n============================================================================================================================================================================================\n HOR\u00c1RIO SEMANAL v3 incremental: TURMA 7\u00baC\n============================================================================================================================================================================================\n   Tempo    |               Seg                |               Ter                |               Qua                |               Qui                |               Sex                |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n 1\u00ba Per\u00edodo |     Portugu\u00eas (Prof. Bruno)      |               ---                |               ---                |     Ingl\u00eas (Prof. Gabriela)      |     Geografia (Prof. F\u00e1bio)      |\n 2\u00ba Per\u00edodo |               ---                |     Portugu\u00eas (Prof. Bruno)      |               ---                |               ---                |      Matem\u00e1tica (Prof. Ana)      |\n 3\u00ba Per\u00edodo |      Ci\u00eancias (Prof. Carla)      |      Ci\u00eancias (Prof. Carla)      |      Matem\u00e1tica (Prof. Ana)      |      Matem\u00e1tica (Prof. Ana)      |     Portugu\u00eas (Prof. Bruno)      |\n 4\u00ba Per\u00edodo |      Matem\u00e1tica (Prof. Ana)      |               ---                |     Ingl\u00eas (Prof. Gabriela)      |     Geografia (Prof. F\u00e1bio)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |\n 5\u00ba Per\u00edodo |      Hist\u00f3ria (Prof. Diana)      |      Hist\u00f3ria (Prof. Diana)      |      Ci\u00eancias (Prof. Carla)      |     Portugu\u00eas (Prof. Bruno)      | Educa\u00e7\u00e3o F\u00edsica (Prof. Eduardo)  |\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "wAgl",
+      "code_hash": "32d3f39cd6bfac6dfb62da76f39d2dbe",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"verificacao-dos-horarios-gerados\">Verifica\u00e7\u00e3o dos hor\u00e1rios gerados</h3>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>verificar_horario</code> \u00e9 aplicada aos cinco hor\u00e1rios gerados acima. Cada linha mostra <code>OK</code> se o hor\u00e1rio respeita R1 a R7, ou a lista das restri\u00e7\u00f5es violadas.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "rEll",
+      "code_hash": "e3ae5a370a7e20766c6bb487b07d2c4d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "H0: OK\nH1 do zero: OK\nH1 incremental: OK\nv3 do zero: OK\nv3 incremental: OK\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "dGlV",
+      "code_hash": "ec7b1a30e97d6030f6a4a233e0291740",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"7-comparacao-do-zero-vs-incremental\">7. Compara\u00e7\u00e3o: do zero vs. incremental</h2>\n<span class=\"paragraph\">Para cada hor\u00e1rio mostram-se tr\u00eas medidas (o <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> aparece como refer\u00eancia, com 0 aulas alteradas por defini\u00e7\u00e3o):</span>\n<ul>\n<li><strong>Tempo mediano</strong>: o tempo de uma \u00fanica resolu\u00e7\u00e3o varia de execu\u00e7\u00e3o para execu\u00e7\u00e3o, por isso a fun\u00e7\u00e3o <code>medir</code> resolve o mesmo problema 5 vezes e devolve a mediana dos tempos.</li>\n<li><strong>Aulas alteradas</strong>: as aulas de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> que n\u00e3o est\u00e3o no mesmo tempo no hor\u00e1rio novo:</li>\n</ul>\n<marimo-tex class=\"arithmatex\">||[\\text{aulas alteradas} = |H_0 \\setminus H_1|||]</marimo-tex><ul>\n<li><strong>Buracos</strong>: o n\u00famero de buracos nos hor\u00e1rios dos professores (O1), contado com <code>contar_buracos</code>. Os hor\u00e1rios resolvidos do zero minimizam O1; os incrementais minimizam as aulas alteradas, por isso podem ter mais buracos.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SdmI",
+      "code_hash": "c977c6b5d4774bcae278ca7990d3d96b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lgWD",
+      "code_hash": "cf3de957f3a8423bd13a1664198a7ebe",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='lgWD-0' random-id='17d605b4-de22-96dc-3358-44ecd1834b1f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H0&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.1114,&#92;&quot;Aulas alteradas&#92;&quot;:0,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H1 do zero&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.1635,&#92;&quot;Aulas alteradas&#92;&quot;:28,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H1 incremental&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0684,&#92;&quot;Aulas alteradas&#92;&quot;:2,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;v3 do zero&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.2251,&#92;&quot;Aulas alteradas&#92;&quot;:33,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;v3 incremental&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0524,&#92;&quot;Aulas alteradas&#92;&quot;:2,&#92;&quot;Buracos&#92;&quot;:12}]&quot;' data-total-rows='5' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "yOPj",
+      "code_hash": "77062a66d383865b63b4b2b00f25f2a7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"aulas-que-mudaram-na-construcao-incremental\">Aulas que mudaram na constru\u00e7\u00e3o incremental</h3>\n<span class=\"paragraph\">Para <code>dados_v2/</code> mostram-se os tempos de onde as aulas sa\u00edram e para onde foram.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "fwwy",
+      "code_hash": "419c8990eb63f3e5ae7397fee4e0bd41",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "v2: sa\u00edram de [('7\u00baA', 'Matem\u00e1tica', 'Sex', 5), ('7\u00baB', 'Matem\u00e1tica', 'Sex', 4)] e foram para [('7\u00baA', 'Matem\u00e1tica', 'Sex', 3), ('7\u00baB', 'Matem\u00e1tica', 'Sex', 2)]\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "LJZf",
+      "code_hash": "18af69a07e499c7f4e9ab4340fc3701d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"8-conclusao\">8. Conclus\u00e3o</h2>\n<span class=\"paragraph\">A tabela da sec\u00e7\u00e3o 7 permite comparar as duas formas de obter um hor\u00e1rio novo depois de uma altera\u00e7\u00e3o aos recursos. Os valores abaixo s\u00e3o os obtidos nas execu\u00e7\u00f5es feitas durante o desenvolvimento.</span>\n<ul>\n<li><strong>Aulas alteradas.</strong> \u00c9 a diferen\u00e7a mais clara. Com <code>dados_v2/</code>, resolver do zero muda 28 aulas em rela\u00e7\u00e3o a <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex>, enquanto a constru\u00e7\u00e3o incremental muda 2, que s\u00e3o as aulas de Matem\u00e1tica da sexta-feira nos tempos em que a Prof. Ana deixou de estar dispon\u00edvel. Com <code>dados_v3/</code>, do zero mudam 33 aulas e na incremental 2.</li>\n<li><strong>Tempo.</strong> Nas medi\u00e7\u00f5es feitas, a mediana do tempo da constru\u00e7\u00e3o incremental foi inferior \u00e0 da resolu\u00e7\u00e3o do zero nos dois cen\u00e1rios. Todos os tempos ficam abaixo de meio segundo e variam de execu\u00e7\u00e3o para execu\u00e7\u00e3o, por isso com dados deste tamanho a diferen\u00e7a de tempo \u00e9 uma evid\u00eancia mais fraca do que o n\u00famero de aulas alteradas.</li>\n<li><strong>Buracos.</strong> \u00c9 o pre\u00e7o da constru\u00e7\u00e3o incremental. Os hor\u00e1rios resolvidos do zero minimizam O1 e ficam com 0 buracos. Os incrementais minimizam as aulas alteradas e n\u00e3o olham aos buracos: com <code>dados_v2/</code> ficam com 0 ou 1, e com <code>dados_v3/</code> chegam a 12, porque as aulas da turma nova s\u00e3o colocadas nos tempos que sobram. O enunciado admite esta troca, ao n\u00e3o exigir que <marimo-tex class=\"arithmatex\">||(H_1||)</marimo-tex> seja \u00f3timo em rela\u00e7\u00e3o a O1.</li>\n</ul>\n<span class=\"paragraph\">Todos os hor\u00e1rios gerados passam na verifica\u00e7\u00e3o autom\u00e1tica de R1 a R7.</span></span>"
+          }
+        }
+      ],
       "console": []
     }
   ]
