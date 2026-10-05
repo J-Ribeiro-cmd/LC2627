@@ -7,7 +7,7 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": "1d0db38904205bec4d6f6f6a1f6cec3e",
+      "code_hash": "be5bfa480c03d358e08d84cb3df4dd92",
       "outputs": [
         {
           "type": "data",
@@ -20,33 +20,33 @@
     },
     {
       "id": "MJUe",
-      "code_hash": "3aac1212ad100c17a34afd75f9cee9ec",
+      "code_hash": "d6618774d7179b9b857446eeb4abc422",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"trabalho-pratico-sudoku-generico-como-csp\">Trabalho Pr\u00e1tico: Sudoku Gen\u00e9rico como CSP</h1>\n<h2 id=\"1-introducao\">1. Introdu\u00e7\u00e3o</h2>\n<span class=\"paragraph\">Neste trabalho constru\u00edmos um gerador/resolvedor de Sudoku <marimo-tex class=\"arithmatex\">||(n^2 \\times n^2||)</marimo-tex>, com <marimo-tex class=\"arithmatex\">||(n||)</marimo-tex> parametriz\u00e1vel (<marimo-tex class=\"arithmatex\">||(n=3||)</marimo-tex> corresponde ao Sudoku cl\u00e1ssico <marimo-tex class=\"arithmatex\">||(9 \\times 9||)</marimo-tex>).</span>\n<span class=\"paragraph\">O Sudoku \u00e9 tratado como um <strong>Problema de Satisfa\u00e7\u00e3o de Restri\u00e7\u00f5es (CSP)</strong>. A regra \u00e9 sempre a mesma: um grupo de c\u00e9lulas tem de ter valores todos diferentes. O que muda entre linhas, colunas e blocos \u00e9 apenas que c\u00e9lulas pertencem ao grupo. Por isso o trabalho assenta numa \u00fanica abstra\u00e7\u00e3o, a classe <code>box</code>, a partir da qual se constr\u00f3i tudo o resto.</span>\n<span class=\"paragraph\">Para resolver o CSP usamos o <strong>CP-SAT</strong> da biblioteca <strong>Google OR-Tools</strong>, por duas raz\u00f5es: permite ter uma vari\u00e1vel inteira por c\u00e9lula, com valores em <marimo-tex class=\"arithmatex\">||([1, n^2]||)</marimo-tex>, e j\u00e1 inclui a restri\u00e7\u00e3o \"todos diferentes\" (<code>AddAllDifferent</code>), que \u00e9 exatamente a regra do Sudoku.</span>\n<span class=\"paragraph\">O notebook est\u00e1 organizado da seguinte forma:</span>\n<ol>\n<li>Introdu\u00e7\u00e3o</li>\n<li><code>box</code>: grupo gen\u00e9rico de c\u00e9lulas (<strong>R1</strong>)</li>\n<li><code>cube</code> e <code>path</code>: blocos, linhas e colunas (<strong>R2, R3</strong>)</li>\n<li>Gera\u00e7\u00e3o aleat\u00f3ria de pistas (<strong>R4</strong>)</li>\n<li>Modelo CSP e resolu\u00e7\u00e3o (<strong>R5, R6</strong>)</li>\n<li>Testes e valida\u00e7\u00e3o</li>\n</ol></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"trabalho-pratico-sudoku-generico-como-csp\">Trabalho Pr\u00e1tico: Sudoku Gen\u00e9rico como CSP</h1>\n<h2 id=\"1-introducao\">1. Introdu\u00e7\u00e3o</h2>\n<span class=\"paragraph\">Neste trabalho constru\u00edmos um gerador/resolvedor de Sudoku <marimo-tex class=\"arithmatex\">||(n^2 \\times n^2||)</marimo-tex>, com <marimo-tex class=\"arithmatex\">||(n||)</marimo-tex> parametriz\u00e1vel (<marimo-tex class=\"arithmatex\">||(n=3||)</marimo-tex> corresponde ao Sudoku cl\u00e1ssico <marimo-tex class=\"arithmatex\">||(9 \\times 9||)</marimo-tex>).</span>\n<span class=\"paragraph\">O Sudoku \u00e9 tratado como um <strong>Problema de Satisfa\u00e7\u00e3o de Restri\u00e7\u00f5es (CSP)</strong>. A regra \u00e9 sempre a mesma: um grupo de c\u00e9lulas tem de ter valores todos diferentes. O que muda entre linhas, colunas e blocos \u00e9 apenas que c\u00e9lulas pertencem ao grupo. Por isso o trabalho assenta numa \u00fanica abstra\u00e7\u00e3o, a classe <code>box</code>, a partir da qual se constr\u00f3i tudo o resto.</span>\n<span class=\"paragraph\">Para resolver o CSP usamos o <strong>CP-SAT</strong> da biblioteca <strong>Google OR-Tools</strong>, por duas raz\u00f5es: permite ter uma vari\u00e1vel inteira por c\u00e9lula, com valores em <marimo-tex class=\"arithmatex\">||([1, n^2]||)</marimo-tex>, e j\u00e1 inclui a restri\u00e7\u00e3o \"todos diferentes\" (<code>AddAllDifferent</code>), que \u00e9 exatamente a regra do Sudoku.</span></span>"
           }
         }
       ],
       "console": []
     },
     {
-      "id": "JmuM",
-      "code_hash": "2b78c8bdecb85041f54a18df213f9669",
+      "id": "vblA",
+      "code_hash": "6e4acf129135c98e61b8fac38f6da182",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"2-box-grupo-generico-de-celulas-r1\">2. <code>box</code>: grupo gen\u00e9rico de c\u00e9lulas (R1)</h2>\n<span class=\"paragraph\">A classe <code>box</code> representa um conjunto qualquer de c\u00e9lulas da grelha \u00e0s quais se aplica a restri\u00e7\u00e3o \"todos diferentes\". N\u00e3o sabe nada sobre linhas, colunas, blocos ou Sudoku.</span>\n<span class=\"paragraph\"><strong>Estrutura de dados.</strong> As c\u00e9lulas s\u00e3o guardadas num dicion\u00e1rio <code>(linha, coluna) \u2192 valor</code>, em que <code>None</code> indica uma c\u00e9lula livre e um inteiro indica uma c\u00e9lula fixa a esse valor. Escolhemos um dicion\u00e1rio porque um grupo tem poucas c\u00e9lulas em rela\u00e7\u00e3o \u00e0 grelha toda, e assim s\u00f3 guardamos as que pertencem ao grupo.</span>\n<span class=\"paragraph\">A classe tem:</span>\n<ul>\n<li>o construtor <code>box(n, celulas=None)</code>, que recebe o <marimo-tex class=\"arithmatex\">||(n||)</marimo-tex> da grelha e, opcionalmente, um dicion\u00e1rio inicial de c\u00e9lulas. O <marimo-tex class=\"arithmatex\">||(n||)</marimo-tex> \u00e9 passado ao construtor para que nada fique fixo a <marimo-tex class=\"arithmatex\">||(9 \\times 9||)</marimo-tex>;</li>\n<li>o m\u00e9todo <code>add(i, j, val=None)</code>, que acrescenta a c\u00e9lula <marimo-tex class=\"arithmatex\">||((i, j)||)</marimo-tex> ao grupo e levanta <code>ValueError</code> se as coordenadas estiverem fora da grelha ou o valor fora de <marimo-tex class=\"arithmatex\">||([1, n^2]||)</marimo-tex>;</li>\n<li>o m\u00e9todo <code>matriz()</code>, que devolve o grupo como matriz <marimo-tex class=\"arithmatex\">||(n^2 \\times n^2||)</marimo-tex>, com zeros nas c\u00e9lulas que n\u00e3o pertencem ao grupo ou n\u00e3o est\u00e3o fixas.</li>\n</ul></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"2-box-grupo-generico-de-celulas-r1\">2. <code>box</code>: grupo gen\u00e9rico de c\u00e9lulas (R1)</h2>\n<span class=\"paragraph\">A classe <code>box</code> representa um conjunto qualquer de c\u00e9lulas da grelha \u00e0s quais se aplica a restri\u00e7\u00e3o \"todos diferentes\". N\u00e3o sabe nada sobre linhas, colunas, blocos ou Sudoku.</span>\n<span class=\"paragraph\"><strong>Estrutura de dados.</strong> As c\u00e9lulas s\u00e3o guardadas num dicion\u00e1rio <code>(linha, coluna) \u2192 valor</code>, em que <code>None</code> indica uma c\u00e9lula livre e um inteiro indica uma c\u00e9lula fixa a esse valor. Escolhemos um dicion\u00e1rio por duas raz\u00f5es. Primeiro, permite distinguir tr\u00eas casos: a c\u00e9lula n\u00e3o pertence ao grupo (a chave n\u00e3o existe), pertence e est\u00e1 livre (None), ou pertence e est\u00e1 fixa (um inteiro). Segundo, um grupo tem poucas c\u00e9lulas em rela\u00e7\u00e3o \u00e0 grelha toda (por exemplo, 9 em 81 quando <marimo-tex class=\"arithmatex\">||(n=3||)</marimo-tex>), e assim s\u00f3 guardamos as que pertencem ao grupo.</span>\n<span class=\"paragraph\">A classe tem:</span>\n<ul>\n<li>o construtor <code>box(celulas=None, n=3)</code>, que recebe opcionalmente um dicion\u00e1rio inicial de c\u00e9lulas e o <marimo-tex class=\"arithmatex\">||(n||)</marimo-tex> da grelha. O <marimo-tex class=\"arithmatex\">||(n||)</marimo-tex> \u00e9 um par\u00e2metro, com valor por omiss\u00e3o 3 (Sudoku cl\u00e1ssico), para que nada fique fixo a <marimo-tex class=\"arithmatex\">||(9 \\times 9||)</marimo-tex>;</li>\n<li>o m\u00e9todo <code>add(i, j, val=None)</code>, que acrescenta a c\u00e9lula <marimo-tex class=\"arithmatex\">||((i, j)||)</marimo-tex> ao grupo e levanta <code>ValueError</code> se as coordenadas estiverem fora da grelha ou o valor fora de <marimo-tex class=\"arithmatex\">||([1, n^2]||)</marimo-tex>. Se a c\u00e9lula j\u00e1 existir no grupo, um valor novo substitui o anterior, mas acrescent\u00e1-la sem valor n\u00e3o altera o que l\u00e1 estava;</li>\n<li>o m\u00e9todo <code>matriz()</code>, que devolve o grupo como matriz <marimo-tex class=\"arithmatex\">||(n^2 \\times n^2||)</marimo-tex>, com zeros nas c\u00e9lulas que n\u00e3o pertencem ao grupo ou n\u00e3o est\u00e3o fixas.</li>\n</ul></span>"
           }
         }
       ],
       "console": []
     },
     {
-      "id": "kNFk",
-      "code_hash": "89f963dc72b79d8896b390afbbc8ec8d",
+      "id": "bkHC",
+      "code_hash": "91f026a149bb73b97e18590e02a99a35",
       "outputs": [
         {
           "type": "data",
@@ -58,21 +58,21 @@
       "console": []
     },
     {
-      "id": "cIyS",
-      "code_hash": "bfd508be8c7d138d30b23b33e25efc01",
+      "id": "lEQa",
+      "code_hash": "e9f347c1253ae5cc6950456094b71adc",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"3-cube-e-path-blocos-linhas-e-colunas-r2-r3\">3. <code>cube</code> e <code>path</code>: blocos, linhas e colunas (R2, R3)</h2>\n<span class=\"paragraph\"><code>cube</code> e <code>path</code> s\u00e3o duas especializa\u00e7\u00f5es de <code>box</code>. Herdam os m\u00e9todos <code>add</code> e <code>matriz</code> e s\u00f3 definem o construtor, que decide que c\u00e9lulas pertencem ao grupo. Todas as c\u00e9lulas s\u00e3o acrescentadas livres (sem valor fixo).</span>\n<ul>\n<li><strong><code>cube(n, i, j)</code></strong> representa o bloco <marimo-tex class=\"arithmatex\">||(n \\times n||)</marimo-tex> de \u00edndices <marimo-tex class=\"arithmatex\">||((i, j)||)</marimo-tex>, com <marimo-tex class=\"arithmatex\">||(0 \\le i, j &lt; n||)</marimo-tex>, cujo canto superior esquerdo \u00e9 a c\u00e9lula <marimo-tex class=\"arithmatex\">||((i \\cdot n,\\ j \\cdot n)||)</marimo-tex>.</li>\n<li><strong><code>path(n, inicio, fim)</code></strong> representa o tro\u00e7o reto, horizontal ou vertical, entre as c\u00e9lulas <code>inicio</code> e <code>fim</code>, inclusive. Funciona nos dois sentidos, porque o grupo \u00e9 o mesmo conjunto de c\u00e9lulas quer se v\u00e1 de <code>inicio</code> para <code>fim</code> quer ao contr\u00e1rio.</li>\n</ul>\n<span class=\"paragraph\">Como as c\u00e9lulas s\u00e3o acrescentadas com o <code>add</code> do <code>box</code>, a verifica\u00e7\u00e3o das coordenadas \u00e9 reaproveitada: um bloco ou um tro\u00e7o fora da grelha levanta <code>ValueError</code>.</span></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"3-cube-e-path-blocos-linhas-e-colunas-r2-r3\">3. <code>cube</code> e <code>path</code>: blocos, linhas e colunas (R2, R3)</h2>\n<span class=\"paragraph\"><code>cube</code> e <code>path</code> s\u00e3o duas especializa\u00e7\u00f5es de <code>box</code>. Herdam os m\u00e9todos <code>add</code> e <code>matriz</code> e s\u00f3 definem o construtor, que decide que c\u00e9lulas pertencem ao grupo. Todas as c\u00e9lulas s\u00e3o acrescentadas livres (sem valor fixo).</span>\n<ul>\n<li><strong><code>cube(i, j, n=3)</code></strong> representa o bloco <marimo-tex class=\"arithmatex\">||(n \\times n||)</marimo-tex> de \u00edndices <marimo-tex class=\"arithmatex\">||((i, j)||)</marimo-tex>, com <marimo-tex class=\"arithmatex\">||(0 \\le i, j &lt; n||)</marimo-tex>, cujo canto superior esquerdo \u00e9 a c\u00e9lula <marimo-tex class=\"arithmatex\">||((i \\cdot n,\\ j \\cdot n)||)</marimo-tex>.</li>\n<li><strong><code>path(inicio, fim, n=3)</code></strong> representa o tro\u00e7o reto, horizontal ou vertical, entre as c\u00e9lulas <code>inicio</code> e <code>fim</code>, inclusive. Funciona nos dois sentidos, porque o grupo \u00e9 o mesmo conjunto de c\u00e9lulas quer se v\u00e1 de <code>inicio</code> para <code>fim</code> quer ao contr\u00e1rio.</li>\n</ul>\n<span class=\"paragraph\">Como as c\u00e9lulas s\u00e3o acrescentadas com o <code>add</code> do <code>box</code>, a verifica\u00e7\u00e3o das coordenadas \u00e9 reaproveitada: um bloco ou um tro\u00e7o fora da grelha levanta <code>ValueError</code>.</span></span>"
           }
         }
       ],
       "console": []
     },
     {
-      "id": "phgy",
-      "code_hash": "d913513561dea62812fbb284cbe857d9",
+      "id": "PKri",
+      "code_hash": "23b15d4d629e4e68bc48776ce6b195cc",
       "outputs": [
         {
           "type": "data",
@@ -82,6 +82,72 @@
         }
       ],
       "console": []
+    },
+    {
+      "id": "jQkB",
+      "code_hash": "bba7185181bae26aec99b77876ad76e7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "{(0, 0): 5}\n{(3, 3): None, (3, 4): None, (3, 5): None, (4, 3): None, (4, 4): None, (4, 5): None, (5, 3): None, (5, 4): None, (5, 5): None}\n{(0, 0): None, (0, 1): None, (0, 2): None, (0, 3): None, (0, 4): None, (0, 5): None, (0, 6): None, (0, 7): None, (0, 8): None}\n{(2, 0): None, (2, 1): None, (3, 0): None, (3, 1): None}\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "Emqu",
+      "code_hash": "c62beceebe51149bbf4edfdfb5af3805",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"4-geracao-aleatoria-de-pistas-r4\">4. Gera\u00e7\u00e3o aleat\u00f3ria de pistas (R4)</h2>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>pistas(k=None, n=3)</code> devolve um <code>box</code> com <marimo-tex class=\"arithmatex\">||(k||)</marimo-tex> c\u00e9lulas escolhidas aleatoriamente na grelha, cada uma fixa a um valor aleat\u00f3rio em <marimo-tex class=\"arithmatex\">||([1, n^2]||)</marimo-tex>. N\u00e3o foi precisa nenhuma classe nova: o resultado \u00e9 apenas um <code>box</code>, preenchido com o <code>add</code>.</span>\n<ul>\n<li>Se <marimo-tex class=\"arithmatex\">||(k||)</marimo-tex> n\u00e3o for dado, usa-se <marimo-tex class=\"arithmatex\">||(k = n||)</marimo-tex> (3 pistas no Sudoku cl\u00e1ssico).</li>\n<li>Se <marimo-tex class=\"arithmatex\">||(k||)</marimo-tex> for negativo ou maior do que o n\u00famero de c\u00e9lulas da grelha, a fun\u00e7\u00e3o levanta <code>ValueError</code>.</li>\n<li>As c\u00e9lulas s\u00e3o sorteadas com <code>random.sample</code> sobre a lista de todas as c\u00e9lulas da grelha, o que garante <marimo-tex class=\"arithmatex\">||(k||)</marimo-tex> c\u00e9lulas diferentes.</li>\n<li>O valor de cada c\u00e9lula \u00e9 sorteado com <code>random.randint</code>, de forma independente das outras, por isso podem se repetir.</li>\n</ul>\n<span class=\"paragraph\">Como os valores s\u00e3o sorteados de forma independente, duas pistas podem ficar com o mesmo valor. O modelo trata o grupo das pistas como qualquer outro grupo (todos diferentes), por isso nesse caso o puzzle fica imposs\u00edvel. Essa situa\u00e7\u00e3o \u00e9 tratada na sec\u00e7\u00e3o 5(R5,R6).\n\"\\\"\")</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SkLN",
+      "code_hash": "13fead7783654cf6c3cec996c98d2680",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ewSo",
+      "code_hash": "62e3cadc920751512a5534e88d1bf329",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "{(2, 8): 1, (2, 1): 4, (7, 8): 3}\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 4, 0, 0, 0, 0, 0, 0, 1]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n[0, 0, 0, 0, 0, 0, 0, 0, 3]\n[0, 0, 0, 0, 0, 0, 0, 0, 0]\n",
+          "mimetype": "text/plain"
+        }
+      ]
     }
   ]
 }
