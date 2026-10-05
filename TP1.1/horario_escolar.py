@@ -398,6 +398,8 @@ def _(mo):
     Para as salas normais:
 
     $$\forall dia,\ p: \quad \sum_{t} \sum_{d \in D_{normal}} x_{t,d,dia,p} \le q_{normal}$$
+
+    **Limitação.** O modelo conta as salas por tipo e não atribui uma sala concreta a cada aula. Por isso, na construção incremental só se medem mudanças de tempo, e não mudanças de sala.
     """)
     return
 
@@ -596,6 +598,8 @@ def _(mo):
 
     Só entram na soma as aulas de $H_0$ que ainda existem nos dados novos, para a mesma função servir quando há turmas ou disciplinas novas.
 
+    Optou-se por hint e objetivo em vez de fixar as aulas não afetadas, que é a outra técnica sugerida no enunciado, porque fixar pode tornar o problema impossível quando a alteração obriga a mexer numa aula que parecia não afetada. Com o objetivo, todas as aulas podem mudar se for preciso, mas cada mudança tem um custo.
+
     Um modelo só pode ter um objetivo, por isso cada caminho tem o seu: O1 na resolução do zero e o número de aulas alteradas na incremental. O enunciado não exige que $H_1$ seja ótimo em relação a O1.
 
     O solver tem um limite de 30 segundos. Se não encontrar solução (modelo inviável ou tempo esgotado), a função devolve `None` no lugar do horário.
@@ -769,150 +773,131 @@ def contar_buracos(dados, horario):
     return total
 
 
-app._unparsable_cell(
-    r"""
-    def verificar_horario(dados, horario):
-        erros = []   # mensagens das restrições que falharam
-
-        # R2: cada turma tem exatamente a carga semanal de cada disciplina
-        for t in dados["turmas"]:
-            for d in dados["disciplinas"]:
-                total = 0
-                for turma, disciplina, dia, p in horario:
-                    if turma == t and disciplina == d["disciplina"]:
-                        total = total + 1
-                if total != d["carga_semanal"]:
-                    erros.append(f"R2: {t} tem {total} tempos de {d['disciplina']}")
-
-        # R1:uma turma não pode ter duas aulas em simultâneo
-        for t in dados["turmas"]:
-            for dia in dados["dias"]:
-                for p in dados["periodos"]:
-                    total = 0
-                    for turma, disciplina, dia_aula, p_aula in horario:
-                        if turma == t and dia_aula == dia and p_aula == p:
-                            total = total+1
-                    if total > 1:
-                        erros.append(f"R1: {t} tem {total} aulas em simultâneo em {dia} {p}")
-
-        for t in dados["turmas"]:
-            for d in dados["disciplinas"]:
-                for dia in dados["dias"]:
-                    # Períodos em que esta turma tem esta disciplina neste dia
-                    tempos = []
-                    for turma, disciplina, dia_aula, p_aula in horario:
-                        if turma == t and disciplina == d["disciplina"] and dia_aula == dia:
-                            tempos.append(p_aula)
-                    tempos.sort()
-                    total = len(tempos)
-
-                    if d["duplo_periodo"]:
-                        # R4: ou não há aula nesse dia, ou há exatamente 2 tempos seguidos
-                        bloco_certo = total == 2 and tempos[1] == tempos[0] + 1
-                        if total > 0 and not bloco_certo:
-                            erros.append(f"R4: {t} tem {d['disciplina']} nos tempos {tempos} de {dia}")
-                    else:
-                        # R3: no máximo uma aula por dia
-                        if total > 1:
-                            erros.append(f"R3: {t} tem {total} aulas de {d['disciplina']} em {dia}")
-    
-
-        #R6: Um professor não pode dar aula num tempo em que está indisponível.
-        prof_por_disciplina = {}
-        for d in dados["disciplinas"]:
-            prof_por_disciplina[d["disciplina"]] = d["professor"]
-        for turma, disciplina, dia, p in horario:
-            prof = prof_por_disciplina[disciplina]
-            if(prof, dia, p) in dados["indisponibilidades"]:
-                erros.append(f"R6: {prof} dá aula a {turma} em {dia} {p}, mas está indisponível")
-
-        #R5: Um professor não pode ter duas aulas no mesmo tempo
-        professores = set(prof_por_disciplina.values())
-        for prof in professores:
-            for dia in dados["dias"]:
-                for p in dados["periodos"]:
-                    total = 0
-                    for turma, disciplina, dia_aula, p_aula in horario:
-                        if prof_por_disciplina[disciplina] == prof and dia_aula == dia and p_aula == p:
-                            total = total + 1
-                    if total>1:
-                        erros.append(f"R5: {prof} tem {total} aulas em simultâneo em {dia} {p}")
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ### Verificação automática das restrições
+    A função `verificar_horario(dados, horario)` confirma, diretamente sobre um horário já resolvido e sem usar o solver, que as restrições R1 a R7 são respeitadas, e devolve a lista das que falharam (vazia se estiver tudo certo). A R8 fica de fora porque diz respeito à leitura dos dados a partir dos ficheiros CSV, e não ao horário gerado.
+    """)
+    return
 
 
-            # R7: em cada tempo, as aulas em cada tipo de sala não excedem a quantidade
-        # Quantidade de salas normais (soma de todas as de tipo "normal")
-        # e quantidade de cada sala especial, pelo nome
-        qtd_normais = 0
-        qtd_especiais = {}
-        for s in dados["salas"]:
-            if s["tipo"] == "normal":
-                qtd_normais = qtd_normais + s["quantidade"]
-            else:
-                qtd_especiais[s["sala"]] = qtd_especiais.get(s["sala"], 0) + s["quantidade"]
+@app.function
+def verificar_horario(dados, horario):
+    if horario is None:
+        return ["sem horário"]
 
-        # Sala especial de cada disciplina (None se usar uma sala normal)
-        sala_por_disciplina = {}
-        for d in dados["disciplinas"]:
-            sala_por_disciplina[d["disciplina"]] = d["sala_especial"]
+    erros = []   # mensagens das restrições que falharam
 
-        # Lista das salas especiais pedidas pelas disciplinas, sem repetidos
-        salas_especiais = []
-        for d in dados["disciplinas"]:
-            if d["sala_especial"] and d["sala_especial"] not in salas_especiais:
-                salas_especiais.append(d["sala_especial"])
-
+    # R1:uma turma não pode ter duas aulas em simultâneo
+    for t in dados["turmas"]:
         for dia in dados["dias"]:
             for p in dados["periodos"]:
-                # R7 (salas normais): aulas de disciplinas sem sala especial neste tempo
                 total = 0
                 for turma, disciplina, dia_aula, p_aula in horario:
-                    if dia_aula == dia and p_aula == p and not sala_por_disciplina[disciplina]:
+                    if turma == t and dia_aula == dia and p_aula == p:
+                        total = total+1
+                if total > 1:
+                    erros.append(f"R1: {t} tem {total} aulas em simultâneo em {dia} {p}")
+
+    # R2: cada turma tem exatamente a carga semanal de cada disciplina
+    for t in dados["turmas"]:
+        for d in dados["disciplinas"]:
+            total = 0
+            for turma, disciplina, dia, p in horario:
+                if turma == t and disciplina == d["disciplina"]:
+                    total = total + 1
+            if total != d["carga_semanal"]:
+                erros.append(f"R2: {t} tem {total} tempos de {d['disciplina']}")
+
+    # R3 e R4: no máximo uma aula por dia, ou um bloco de 2 tempos seguidos
+    for t in dados["turmas"]:
+        for d in dados["disciplinas"]:
+            for dia in dados["dias"]:
+                # Períodos em que esta turma tem esta disciplina neste dia
+                tempos = []
+                for turma, disciplina, dia_aula, p_aula in horario:
+                    if turma == t and disciplina == d["disciplina"] and dia_aula == dia:
+                        tempos.append(p_aula)
+                tempos.sort()
+                total = len(tempos)
+
+                if d["duplo_periodo"]:
+                    # R4: ou não há aula nesse dia, ou há exatamente 2 tempos seguidos
+                    bloco_certo = total == 2 and tempos[1] == tempos[0] + 1
+                    if total > 0 and not bloco_certo:
+                        erros.append(f"R4: {t} tem {d['disciplina']} nos tempos {tempos} de {dia}")
+                else:
+                    # R3: no máximo uma aula por dia
+                    if total > 1:
+                        erros.append(f"R3: {t} tem {total} aulas de {d['disciplina']} em {dia}")
+
+    # Dicionário disciplina -> professor (usado na R5 e na R6)
+    prof_por_disciplina = {}
+    for d in dados["disciplinas"]:
+        prof_por_disciplina[d["disciplina"]] = d["professor"]
+
+    #R5: Um professor não pode ter duas aulas no mesmo tempo
+    professores = set(prof_por_disciplina.values())
+    for prof in professores:
+        for dia in dados["dias"]:
+            for p in dados["periodos"]:
+                total = 0
+                for turma, disciplina, dia_aula, p_aula in horario:
+                    if prof_por_disciplina[disciplina] == prof and dia_aula == dia and p_aula == p:
                         total = total + 1
-                if total > qtd_normais:
-                    erros.append(f"R7: {total} aulas em salas normais em {dia} {p}, mas só há {qtd_normais}")
+                if total>1:
+                    erros.append(f"R5: {prof} tem {total} aulas em simultâneo em {dia} {p}")
 
-                # R7 (salas especiais): aulas que precisam de cada sala especial neste tempo
-                for sala in salas_especiais:
-                    total = 0
-                    for turma, disciplina, dia_aula, p_aula in horario:
-                        if dia_aula == dia and p_aula == p and sala_por_disciplina[disciplina] == sala:
-                            total = total + 1
-                    # se a sala não estiver em salas.csv, a quantidade é 0
-                    if total > qtd_especiais.get(sala, 0):
-                        erros.append(f"R7: {total} aulas em {sala} em {dia} {p}, mas só há {qtd_especiais.get(sala, 0)}")
+    #R6: Um professor não pode dar aula num tempo em que está indisponível.
+    for turma, disciplina, dia, p in horario:
+        prof = prof_por_disciplina[disciplina]
+        if(prof, dia, p) in dados["indisponibilidades"]:
+            erros.append(f"R6: {prof} dá aula a {turma} em {dia} {p}, mas está indisponível")
 
-        return erros
+    # R7: em cada tempo, as aulas em cada tipo de sala não excedem a quantidade
+    # Quantidade de salas normais (soma de todas as de tipo "normal")
+    # e quantidade de cada sala especial, pelo nome
+    qtd_normais = 0
+    qtd_especiais = {}
+    for s in dados["salas"]:
+        if s["tipo"] == "normal":
+            qtd_normais = qtd_normais + s["quantidade"]
+        else:
+            qtd_especiais[s["sala"]] = qtd_especiais.get(s["sala"], 0) + s["quantidade"]
 
-                    
-    
-    return erros 
-    """,
-    name="_"
-)
+    # Sala especial de cada disciplina (None se usar uma sala normal)
+    sala_por_disciplina = {}
+    for d in dados["disciplinas"]:
+        sala_por_disciplina[d["disciplina"]] = d["sala_especial"]
 
+    # Lista das salas especiais pedidas pelas disciplinas, sem repetidos
+    salas_especiais = []
+    for d in dados["disciplinas"]:
+        if d["sala_especial"] and d["sala_especial"] not in salas_especiais:
+            salas_especiais.append(d["sala_especial"])
 
-@app.cell
-def _(
-    dados_h0,
-    dados_h1,
-    dados_h3,
-    h0,
-    h1_inc,
-    h1_zero,
-    h3_inc,
-    h3_zero,
-    verificar_horario,
-):
-    for _nome, _dados, _horario in [
-        ("H0", dados_h0, h0),
-        ("H1 do zero", dados_h1, h1_zero),
-        ("H1 incremental", dados_h1, h1_inc),
-        ("v3 do zero", dados_h3, h3_zero),
-        ("v3 incremental", dados_h3, h3_inc),
-    ]:
-        _erros = verificar_horario(_dados, _horario)
-        print(f"{_nome}: {'OK' if not _erros else _erros}")
-    return
+    for dia in dados["dias"]:
+        for p in dados["periodos"]:
+            # R7 (salas normais): aulas de disciplinas sem sala especial neste tempo
+            total = 0
+            for turma, disciplina, dia_aula, p_aula in horario:
+                if dia_aula == dia and p_aula == p and not sala_por_disciplina[disciplina]:
+                    total = total + 1
+            if total > qtd_normais:
+                erros.append(f"R7: {total} aulas em salas normais em {dia} {p}, mas só há {qtd_normais}")
+
+            # R7 (salas especiais): aulas que precisam de cada sala especial neste tempo
+            for sala in salas_especiais:
+                total = 0
+                for turma, disciplina, dia_aula, p_aula in horario:
+                    if dia_aula == dia and p_aula == p and sala_por_disciplina[disciplina] == sala:
+                        total = total + 1
+                # se a sala não estiver em salas.csv, a quantidade é 0
+                if total > qtd_especiais.get(sala, 0):
+                    erros.append(f"R7: {total} aulas em {sala} em {dia} {p}, mas só há {qtd_especiais.get(sala, 0)}")
+
+    return erros
 
 
 @app.cell
@@ -1008,8 +993,31 @@ def _(dados_h3, h0, resolver):
 @app.cell
 def _(mo):
     mo.md(r"""
+    ### Verificação dos horários gerados
+    A função `verificar_horario` é aplicada aos cinco horários gerados acima. Cada linha mostra `OK` se o horário respeita R1 a R7, ou a lista das restrições violadas.
+    """)
+    return
+
+
+@app.cell
+def _(dados_h0, dados_h1, dados_h3, h0, h1_inc, h1_zero, h3_inc, h3_zero):
+    for _nome, _dados, _horario in [
+        ("H0", dados_h0, h0),
+        ("H1 do zero", dados_h1, h1_zero),
+        ("H1 incremental", dados_h1, h1_inc),
+        ("v3 do zero", dados_h3, h3_zero),
+        ("v3 incremental", dados_h3, h3_inc),
+    ]:
+        _erros = verificar_horario(_dados, _horario)
+        print(f"{_nome}: {'OK' if not _erros else _erros}")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
     ## 7. Comparação: do zero vs. incremental
-    Para cada horário novo mostram-se três medidas:
+    Para cada horário mostram-se três medidas (o $H_0$ aparece como referência, com 0 aulas alteradas por definição):
 
     - **Tempo mediano**: o tempo de uma única resolução varia de execução para execução, por isso a função `medir` resolve o mesmo problema 5 vezes e devolve a mediana dos tempos.
     - **Aulas alteradas**: as aulas de $H_0$ que não estão no mesmo tempo no horário novo:
@@ -1034,9 +1042,21 @@ def _(resolver):
 
 
 @app.cell
-def _(dados_h1, dados_h3, h0, h1_inc, h1_zero, h3_inc, h3_zero, medir, mo):
+def _(
+    dados_h0,
+    dados_h1,
+    dados_h3,
+    h0,
+    h1_inc,
+    h1_zero,
+    h3_inc,
+    h3_zero,
+    medir,
+    mo,
+):
     _tabela = []
     for _nome, _dados, _base, _horario in [
+        ("H0", dados_h0, None, h0),
         ("H1 do zero", dados_h1, None, h1_zero),
         ("H1 incremental", dados_h1, h0, h1_inc),
         ("v3 do zero", dados_h3, None, h3_zero),
@@ -1056,7 +1076,7 @@ def _(dados_h1, dados_h3, h0, h1_inc, h1_zero, h3_inc, h3_zero, medir, mo):
 def _(mo):
     mo.md(r"""
     ### Aulas que mudaram na construção incremental
-    Para `dados_v2/` mostram-se os tempos de onde as aulas saíram e para onde foram. Para `dados_v3/` mostram-se só os tempos de onde saíram, porque o horário novo inclui também todas as aulas da turma e da disciplina novas.
+    Para `dados_v2/` mostram-se os tempos de onde as aulas saíram e para onde foram.
     """)
     return
 
@@ -1064,6 +1084,35 @@ def _(mo):
 @app.cell
 def _(h0, h1_inc):
     print("v2: saíram de", sorted(h0 - h1_inc), "e foram para", sorted(h1_inc - h0))
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## 8. Conclusão
+    A tabela da secção 7 permite comparar as duas formas de obter um horário novo depois de uma alteração aos recursos. Os valores abaixo são os obtidos nas execuções feitas durante o desenvolvimento.
+
+    - **Aulas alteradas.** É a diferença mais clara. Com `dados_v2/`, resolver do zero muda 28 aulas em relação a $H_0$, enquanto a construção incremental muda 2, que são as aulas de Matemática da sexta-feira nos tempos em que a Prof. Ana deixou de estar disponível. Com `dados_v3/`, do zero mudam 33 aulas e na incremental 2.
+    - **Tempo.** Nas medições feitas, a mediana do tempo da construção incremental foi inferior à da resolução do zero nos dois cenários. Todos os tempos ficam abaixo de meio segundo e variam de execução para execução, por isso com dados deste tamanho a diferença de tempo é uma evidência mais fraca do que o número de aulas alteradas.
+    - **Buracos.** É o preço da construção incremental. Os horários resolvidos do zero minimizam O1 e ficam com 0 buracos. Os incrementais minimizam as aulas alteradas e não olham aos buracos: com `dados_v2/` ficam com 0 ou 1, e com `dados_v3/` chegam a 12, porque as aulas da turma nova são colocadas nos tempos que sobram. O enunciado admite esta troca, ao não exigir que $H_1$ seja ótimo em relação a O1.
+
+    Todos os horários gerados passam na verificação automática de R1 a R7.
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## 9. Utilização de ferramentas de IA
+    No desenvolvimento deste trabalho recorreu-se ao apoio de modelos de linguagem (LLM), usados como ferramenta de consulta e de revisão: para esclarecer dúvidas sobre o CP-SAT e o Marimo, depurar erros, organizar o código em funções e rever a redação das explicações. As decisões de modelação e a validação dos resultados foram verificadas pelos autores.
+
+    Por transparência, ficam as conversas que serviram de apoio:
+
+    - Claude (Anthropic): <https://claude.ai/share/3e88341a-10b5-4ac2-b97d-821a4856df24>
+    - Gemini (Google): <https://share.gemini.google/MuGTbAdONH2P>
+    """)
     return
 
 

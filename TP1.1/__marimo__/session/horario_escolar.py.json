@@ -189,12 +189,12 @@
     },
     {
       "id": "iLit",
-      "code_hash": "876c9334d392cb471c15dba9a455031b",
+      "code_hash": "4e81343855c672747bbe29ae79038cbd",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"r7-capacidade-das-salas\">R7: capacidade das salas</h3>\n<span class=\"paragraph\">As disciplinas s\u00e3o separadas pelo tipo de sala que ocupam: <marimo-tex class=\"arithmatex\">||(D_s||)</marimo-tex> \u00e9 o conjunto das disciplinas que usam a sala especial <marimo-tex class=\"arithmatex\">||(s||)</marimo-tex> e <marimo-tex class=\"arithmatex\">||(D_{normal}||)</marimo-tex> o das restantes. Em cada dia e per\u00edodo, o n\u00famero de aulas a decorrer em cada tipo de sala n\u00e3o pode exceder a <code>quantidade</code> <marimo-tex class=\"arithmatex\">||(q||)</marimo-tex> definida em <code>salas.csv</code>.</span>\n<span class=\"paragraph\">Para cada sala especial <marimo-tex class=\"arithmatex\">||(s||)</marimo-tex>:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall dia,\\ p: \\quad \\sum_{t} \\sum_{d \\in D_s} x_{t,d,dia,p} \\le q_s||]</marimo-tex><span class=\"paragraph\">Para as salas normais:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall dia,\\ p: \\quad \\sum_{t} \\sum_{d \\in D_{normal}} x_{t,d,dia,p} \\le q_{normal}||]</marimo-tex></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"r7-capacidade-das-salas\">R7: capacidade das salas</h3>\n<span class=\"paragraph\">As disciplinas s\u00e3o separadas pelo tipo de sala que ocupam: <marimo-tex class=\"arithmatex\">||(D_s||)</marimo-tex> \u00e9 o conjunto das disciplinas que usam a sala especial <marimo-tex class=\"arithmatex\">||(s||)</marimo-tex> e <marimo-tex class=\"arithmatex\">||(D_{normal}||)</marimo-tex> o das restantes. Em cada dia e per\u00edodo, o n\u00famero de aulas a decorrer em cada tipo de sala n\u00e3o pode exceder a <code>quantidade</code> <marimo-tex class=\"arithmatex\">||(q||)</marimo-tex> definida em <code>salas.csv</code>.</span>\n<span class=\"paragraph\">Para cada sala especial <marimo-tex class=\"arithmatex\">||(s||)</marimo-tex>:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall dia,\\ p: \\quad \\sum_{t} \\sum_{d \\in D_s} x_{t,d,dia,p} \\le q_s||]</marimo-tex><span class=\"paragraph\">Para as salas normais:</span>\n<marimo-tex class=\"arithmatex\">||[\\forall dia,\\ p: \\quad \\sum_{t} \\sum_{d \\in D_{normal}} x_{t,d,dia,p} \\le q_{normal}||]</marimo-tex><span class=\"paragraph\"><strong>Limita\u00e7\u00e3o.</strong> O modelo conta as salas por tipo e n\u00e3o atribui uma sala concreta a cada aula. Por isso, na constru\u00e7\u00e3o incremental s\u00f3 se medem mudan\u00e7as de tempo, e n\u00e3o mudan\u00e7as de sala.</span></span>"
           }
         }
       ],
@@ -267,12 +267,12 @@
     },
     {
       "id": "DnEU",
-      "code_hash": "be13161990fbd3777446122ec46f0853",
+      "code_hash": "df9668c5ea80a2e25eeadc49ea2c86af",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"4-resolucao-e-construcao-incremental-r9\">4. Resolu\u00e7\u00e3o e constru\u00e7\u00e3o incremental (R9)</h2>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>resolver(dados, base=None)</code> constr\u00f3i o modelo, resolve-o e devolve o hor\u00e1rio como um conjunto de tuplos <code>(turma, disciplina, dia, periodo)</code>, juntamente com o tempo de resolu\u00e7\u00e3o.</span>\n<span class=\"paragraph\"><strong>Sem hor\u00e1rio base</strong> (<code>base=None</code>): o problema \u00e9 resolvido do zero, com as restri\u00e7\u00f5es R1 a R7 e o objetivo O1 (minimizar os buracos dos professores, com <code>total_buracos</code>).</span>\n<span class=\"paragraph\"><strong>Com hor\u00e1rio base</strong> (<code>base=H0</code>): a resolu\u00e7\u00e3o \u00e9 incremental e reaproveita o hor\u00e1rio anterior de duas formas:</span>\n<ul>\n<li><strong>Hint</strong>: para as aulas que j\u00e1 existiam em <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex>, sugere-se ao solver o valor que cada vari\u00e1vel tinha (<code>AddHint</code>), para a procura come\u00e7ar perto do hor\u00e1rio anterior.</li>\n<li><strong>Objetivo</strong>: minimiza-se o n\u00famero de aulas de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> que deixam de estar no mesmo tempo. Cada parcela <marimo-tex class=\"arithmatex\">||((1 - x)||)</marimo-tex> vale 0 se a aula fica onde estava e 1 se muda:</li>\n</ul>\n<marimo-tex class=\"arithmatex\">||[\\min \\sum_{(t,d,dia,p) \\in H_0} \\left(1 - x_{t,d,dia,p}\\right)||]</marimo-tex><span class=\"paragraph\">S\u00f3 entram na soma as aulas de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> que ainda existem nos dados novos, para a mesma fun\u00e7\u00e3o servir quando h\u00e1 turmas ou disciplinas novas.</span>\n<span class=\"paragraph\">Um modelo s\u00f3 pode ter um objetivo, por isso cada caminho tem o seu: O1 na resolu\u00e7\u00e3o do zero e o n\u00famero de aulas alteradas na incremental. O enunciado n\u00e3o exige que <marimo-tex class=\"arithmatex\">||(H_1||)</marimo-tex> seja \u00f3timo em rela\u00e7\u00e3o a O1.</span>\n<span class=\"paragraph\">O solver tem um limite de 30 segundos. Se n\u00e3o encontrar solu\u00e7\u00e3o (modelo invi\u00e1vel ou tempo esgotado), a fun\u00e7\u00e3o devolve <code>None</code> no lugar do hor\u00e1rio.</span></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"4-resolucao-e-construcao-incremental-r9\">4. Resolu\u00e7\u00e3o e constru\u00e7\u00e3o incremental (R9)</h2>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>resolver(dados, base=None)</code> constr\u00f3i o modelo, resolve-o e devolve o hor\u00e1rio como um conjunto de tuplos <code>(turma, disciplina, dia, periodo)</code>, juntamente com o tempo de resolu\u00e7\u00e3o.</span>\n<span class=\"paragraph\"><strong>Sem hor\u00e1rio base</strong> (<code>base=None</code>): o problema \u00e9 resolvido do zero, com as restri\u00e7\u00f5es R1 a R7 e o objetivo O1 (minimizar os buracos dos professores, com <code>total_buracos</code>).</span>\n<span class=\"paragraph\"><strong>Com hor\u00e1rio base</strong> (<code>base=H0</code>): a resolu\u00e7\u00e3o \u00e9 incremental e reaproveita o hor\u00e1rio anterior de duas formas:</span>\n<ul>\n<li><strong>Hint</strong>: para as aulas que j\u00e1 existiam em <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex>, sugere-se ao solver o valor que cada vari\u00e1vel tinha (<code>AddHint</code>), para a procura come\u00e7ar perto do hor\u00e1rio anterior.</li>\n<li><strong>Objetivo</strong>: minimiza-se o n\u00famero de aulas de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> que deixam de estar no mesmo tempo. Cada parcela <marimo-tex class=\"arithmatex\">||((1 - x)||)</marimo-tex> vale 0 se a aula fica onde estava e 1 se muda:</li>\n</ul>\n<marimo-tex class=\"arithmatex\">||[\\min \\sum_{(t,d,dia,p) \\in H_0} \\left(1 - x_{t,d,dia,p}\\right)||]</marimo-tex><span class=\"paragraph\">S\u00f3 entram na soma as aulas de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> que ainda existem nos dados novos, para a mesma fun\u00e7\u00e3o servir quando h\u00e1 turmas ou disciplinas novas.</span>\n<span class=\"paragraph\">Optou-se por hint e objetivo em vez de fixar as aulas n\u00e3o afetadas, que \u00e9 a outra t\u00e9cnica sugerida no enunciado, porque fixar pode tornar o problema imposs\u00edvel quando a altera\u00e7\u00e3o obriga a mexer numa aula que parecia n\u00e3o afetada. Com o objetivo, todas as aulas podem mudar se for preciso, mas cada mudan\u00e7a tem um custo.</span>\n<span class=\"paragraph\">Um modelo s\u00f3 pode ter um objetivo, por isso cada caminho tem o seu: O1 na resolu\u00e7\u00e3o do zero e o n\u00famero de aulas alteradas na incremental. O enunciado n\u00e3o exige que <marimo-tex class=\"arithmatex\">||(H_1||)</marimo-tex> seja \u00f3timo em rela\u00e7\u00e3o a O1.</span>\n<span class=\"paragraph\">O solver tem um limite de 30 segundos. Se n\u00e3o encontrar solu\u00e7\u00e3o (modelo invi\u00e1vel ou tempo esgotado), a fun\u00e7\u00e3o devolve <code>None</code> no lugar do hor\u00e1rio.</span></span>"
           }
         }
       ],
@@ -344,19 +344,33 @@
       "console": []
     },
     {
-      "id": "Levl",
-      "code_hash": null,
-      "outputs": [],
-      "console": []
-    },
-    {
-      "id": "hPaI",
-      "code_hash": null,
-      "outputs": [],
-      "console": []
-    },
-    {
       "id": "nHfw",
+      "code_hash": "5a98b8c630e5f4f1fefb2f0ab70e5fea",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"verificacao-automatica-das-restricoes\">Verifica\u00e7\u00e3o autom\u00e1tica das restri\u00e7\u00f5es</h3>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>verificar_horario(dados, horario)</code> confirma, diretamente sobre um hor\u00e1rio j\u00e1 resolvido e sem usar o solver, que as restri\u00e7\u00f5es R1 a R7 s\u00e3o respeitadas, e devolve a lista das que falharam (vazia se estiver tudo certo). A R8 fica de fora porque diz respeito \u00e0 leitura dos dados a partir dos ficheiros CSV, e n\u00e3o ao hor\u00e1rio gerado.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "xXTn",
+      "code_hash": "5e740dff2dbeaac6833d90e216cbf77b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "AjVT",
       "code_hash": "37e952ef77e1966715c457703bab5555",
       "outputs": [
         {
@@ -369,7 +383,7 @@
       "console": []
     },
     {
-      "id": "xXTn",
+      "id": "pHFh",
       "code_hash": "de48b0cebe1143e27e80b66d763d8ccb",
       "outputs": [
         {
@@ -389,7 +403,7 @@
       ]
     },
     {
-      "id": "AjVT",
+      "id": "NCOB",
       "code_hash": "21a2c1d9de989a9ab073433728b3a756",
       "outputs": [
         {
@@ -402,7 +416,7 @@
       "console": []
     },
     {
-      "id": "pHFh",
+      "id": "aqbW",
       "code_hash": "9e5d78ac6a3c4be89b9f9cc3dcc20490",
       "outputs": [
         {
@@ -422,7 +436,7 @@
       ]
     },
     {
-      "id": "NCOB",
+      "id": "TRpd",
       "code_hash": "cdcecbc6973dbbf5a6d534de0441218f",
       "outputs": [
         {
@@ -435,7 +449,7 @@
       "console": []
     },
     {
-      "id": "aqbW",
+      "id": "TXez",
       "code_hash": "4194a217bd8a0ad7519f1edbdbb942cf",
       "outputs": [
         {
@@ -455,7 +469,7 @@
       ]
     },
     {
-      "id": "TRpd",
+      "id": "dNNg",
       "code_hash": "ab8a048f6e5225d841299fa7b0171425",
       "outputs": [
         {
@@ -468,7 +482,7 @@
       "console": []
     },
     {
-      "id": "TXez",
+      "id": "yCnT",
       "code_hash": "fb0430006a38238ef6852a0c55421395",
       "outputs": [
         {
@@ -488,7 +502,7 @@
       ]
     },
     {
-      "id": "dNNg",
+      "id": "wlCL",
       "code_hash": "da54330e4ab7984ad23cafd16cd6a791",
       "outputs": [
         {
@@ -501,7 +515,7 @@
       "console": []
     },
     {
-      "id": "yCnT",
+      "id": "kqZH",
       "code_hash": "4260255a18a8211a567ec5c198b8fbfe",
       "outputs": [
         {
@@ -521,39 +535,13 @@
       ]
     },
     {
-      "id": "wlCL",
-      "code_hash": "f6cc589341cec0b9844ee01663f3926f",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"7-comparacao-do-zero-vs-incremental\">7. Compara\u00e7\u00e3o: do zero vs. incremental</h2>\n<span class=\"paragraph\">Para cada hor\u00e1rio novo mostram-se tr\u00eas medidas:</span>\n<ul>\n<li><strong>Tempo mediano</strong>: o tempo de uma \u00fanica resolu\u00e7\u00e3o varia de execu\u00e7\u00e3o para execu\u00e7\u00e3o, por isso a fun\u00e7\u00e3o <code>medir</code> resolve o mesmo problema 5 vezes e devolve a mediana dos tempos.</li>\n<li><strong>Aulas alteradas</strong>: as aulas de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> que n\u00e3o est\u00e3o no mesmo tempo no hor\u00e1rio novo:</li>\n</ul>\n<marimo-tex class=\"arithmatex\">||[\\text{aulas alteradas} = |H_0 \\setminus H_1|||]</marimo-tex><ul>\n<li><strong>Buracos</strong>: o n\u00famero de buracos nos hor\u00e1rios dos professores (O1), contado com <code>contar_buracos</code>. Os hor\u00e1rios resolvidos do zero minimizam O1; os incrementais minimizam as aulas alteradas, por isso podem ter mais buracos.</li>\n</ul></span>"
-          }
-        }
-      ],
-      "console": []
-    },
-    {
-      "id": "kqZH",
-      "code_hash": "c977c6b5d4774bcae278ca7990d3d96b",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": []
-    },
-    {
       "id": "wAgl",
-      "code_hash": "b021e5eb30135560175652a53c504f78",
+      "code_hash": "32d3f39cd6bfac6dfb62da76f39d2dbe",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/html": "<marimo-ui-element object-id='wAgl-0' random-id='82887962-83d2-6077-4ca9-c65a10ad367a'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H1 do zero&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.1365,&#92;&quot;Aulas alteradas&#92;&quot;:28,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H1 incremental&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0571,&#92;&quot;Aulas alteradas&#92;&quot;:2,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;v3 do zero&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.1129,&#92;&quot;Aulas alteradas&#92;&quot;:33,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;v3 incremental&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0588,&#92;&quot;Aulas alteradas&#92;&quot;:2,&#92;&quot;Buracos&#92;&quot;:12}]&quot;' data-total-rows='4' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"verificacao-dos-horarios-gerados\">Verifica\u00e7\u00e3o dos hor\u00e1rios gerados</h3>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>verificar_horario</code> \u00e9 aplicada aos cinco hor\u00e1rios gerados acima. Cada linha mostra <code>OK</code> se o hor\u00e1rio respeita R1 a R7, ou a lista das restri\u00e7\u00f5es violadas.</span></span>"
           }
         }
       ],
@@ -561,20 +549,7 @@
     },
     {
       "id": "rEll",
-      "code_hash": "9e16d6490ba40fde346fc21efb13a73c",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"aulas-que-mudaram-na-construcao-incremental\">Aulas que mudaram na constru\u00e7\u00e3o incremental</h3>\n<span class=\"paragraph\">Para <code>dados_v2/</code> mostram-se os tempos de onde as aulas sa\u00edram e para onde foram. Para <code>dados_v3/</code> mostram-se s\u00f3 os tempos de onde sa\u00edram, porque o hor\u00e1rio novo inclui tamb\u00e9m todas as aulas da turma e da disciplina novas.</span></span>"
-          }
-        }
-      ],
-      "console": []
-    },
-    {
-      "id": "dGlV",
-      "code_hash": "3b69c5102c0c7666d9517c2bebb0f390",
+      "code_hash": "e3ae5a370a7e20766c6bb487b07d2c4d",
       "outputs": [
         {
           "type": "data",
@@ -587,10 +562,95 @@
         {
           "type": "stream",
           "name": "stdout",
-          "text": "v2: sa\u00edram de [('7\u00baA', 'Matem\u00e1tica', 'Sex', 5), ('7\u00baB', 'Matem\u00e1tica', 'Sex', 4)] e foram para [('7\u00baA', 'Matem\u00e1tica', 'Sex', 3), ('7\u00baB', 'Matem\u00e1tica', 'Sex', 2)]\nv3: sa\u00edram de [('7\u00baA', 'Portugu\u00eas', 'Qua', 3), ('7\u00baB', 'Portugu\u00eas', 'Qua', 2)]\n",
+          "text": "H0: OK\nH1 do zero: OK\nH1 incremental: OK\nv3 do zero: OK\nv3 incremental: OK\n",
           "mimetype": "text/plain"
         }
       ]
+    },
+    {
+      "id": "dGlV",
+      "code_hash": "ec7b1a30e97d6030f6a4a233e0291740",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"7-comparacao-do-zero-vs-incremental\">7. Compara\u00e7\u00e3o: do zero vs. incremental</h2>\n<span class=\"paragraph\">Para cada hor\u00e1rio mostram-se tr\u00eas medidas (o <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> aparece como refer\u00eancia, com 0 aulas alteradas por defini\u00e7\u00e3o):</span>\n<ul>\n<li><strong>Tempo mediano</strong>: o tempo de uma \u00fanica resolu\u00e7\u00e3o varia de execu\u00e7\u00e3o para execu\u00e7\u00e3o, por isso a fun\u00e7\u00e3o <code>medir</code> resolve o mesmo problema 5 vezes e devolve a mediana dos tempos.</li>\n<li><strong>Aulas alteradas</strong>: as aulas de <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex> que n\u00e3o est\u00e3o no mesmo tempo no hor\u00e1rio novo:</li>\n</ul>\n<marimo-tex class=\"arithmatex\">||[\\text{aulas alteradas} = |H_0 \\setminus H_1|||]</marimo-tex><ul>\n<li><strong>Buracos</strong>: o n\u00famero de buracos nos hor\u00e1rios dos professores (O1), contado com <code>contar_buracos</code>. Os hor\u00e1rios resolvidos do zero minimizam O1; os incrementais minimizam as aulas alteradas, por isso podem ter mais buracos.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SdmI",
+      "code_hash": "c977c6b5d4774bcae278ca7990d3d96b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lgWD",
+      "code_hash": "cf3de957f3a8423bd13a1664198a7ebe",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='lgWD-0' random-id='17d605b4-de22-96dc-3358-44ecd1834b1f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H0&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.1114,&#92;&quot;Aulas alteradas&#92;&quot;:0,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H1 do zero&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.1635,&#92;&quot;Aulas alteradas&#92;&quot;:28,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H1 incremental&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0684,&#92;&quot;Aulas alteradas&#92;&quot;:2,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;v3 do zero&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.2251,&#92;&quot;Aulas alteradas&#92;&quot;:33,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;v3 incremental&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0524,&#92;&quot;Aulas alteradas&#92;&quot;:2,&#92;&quot;Buracos&#92;&quot;:12}]&quot;' data-total-rows='5' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "yOPj",
+      "code_hash": "77062a66d383865b63b4b2b00f25f2a7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"aulas-que-mudaram-na-construcao-incremental\">Aulas que mudaram na constru\u00e7\u00e3o incremental</h3>\n<span class=\"paragraph\">Para <code>dados_v2/</code> mostram-se os tempos de onde as aulas sa\u00edram e para onde foram.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "fwwy",
+      "code_hash": "419c8990eb63f3e5ae7397fee4e0bd41",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "v2: sa\u00edram de [('7\u00baA', 'Matem\u00e1tica', 'Sex', 5), ('7\u00baB', 'Matem\u00e1tica', 'Sex', 4)] e foram para [('7\u00baA', 'Matem\u00e1tica', 'Sex', 3), ('7\u00baB', 'Matem\u00e1tica', 'Sex', 2)]\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "LJZf",
+      "code_hash": "18af69a07e499c7f4e9ab4340fc3701d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"8-conclusao\">8. Conclus\u00e3o</h2>\n<span class=\"paragraph\">A tabela da sec\u00e7\u00e3o 7 permite comparar as duas formas de obter um hor\u00e1rio novo depois de uma altera\u00e7\u00e3o aos recursos. Os valores abaixo s\u00e3o os obtidos nas execu\u00e7\u00f5es feitas durante o desenvolvimento.</span>\n<ul>\n<li><strong>Aulas alteradas.</strong> \u00c9 a diferen\u00e7a mais clara. Com <code>dados_v2/</code>, resolver do zero muda 28 aulas em rela\u00e7\u00e3o a <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex>, enquanto a constru\u00e7\u00e3o incremental muda 2, que s\u00e3o as aulas de Matem\u00e1tica da sexta-feira nos tempos em que a Prof. Ana deixou de estar dispon\u00edvel. Com <code>dados_v3/</code>, do zero mudam 33 aulas e na incremental 2.</li>\n<li><strong>Tempo.</strong> Nas medi\u00e7\u00f5es feitas, a mediana do tempo da constru\u00e7\u00e3o incremental foi inferior \u00e0 da resolu\u00e7\u00e3o do zero nos dois cen\u00e1rios. Todos os tempos ficam abaixo de meio segundo e variam de execu\u00e7\u00e3o para execu\u00e7\u00e3o, por isso com dados deste tamanho a diferen\u00e7a de tempo \u00e9 uma evid\u00eancia mais fraca do que o n\u00famero de aulas alteradas.</li>\n<li><strong>Buracos.</strong> \u00c9 o pre\u00e7o da constru\u00e7\u00e3o incremental. Os hor\u00e1rios resolvidos do zero minimizam O1 e ficam com 0 buracos. Os incrementais minimizam as aulas alteradas e n\u00e3o olham aos buracos: com <code>dados_v2/</code> ficam com 0 ou 1, e com <code>dados_v3/</code> chegam a 12, porque as aulas da turma nova s\u00e3o colocadas nos tempos que sobram. O enunciado admite esta troca, ao n\u00e3o exigir que <marimo-tex class=\"arithmatex\">||(H_1||)</marimo-tex> seja \u00f3timo em rela\u00e7\u00e3o a O1.</li>\n</ul>\n<span class=\"paragraph\">Todos os hor\u00e1rios gerados passam na verifica\u00e7\u00e3o autom\u00e1tica de R1 a R7.</span></span>"
+          }
+        }
+      ],
+      "console": []
     }
   ]
 }
