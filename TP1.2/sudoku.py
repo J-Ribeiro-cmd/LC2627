@@ -20,7 +20,7 @@ def _():
     return cp_model, mo, random
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     # Trabalho Prático: Sudoku Genérico como CSP
@@ -36,7 +36,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 2. `box`: grupo genérico de células (R1)
@@ -193,7 +193,6 @@ def _(mo):
     - O valor de cada célula é sorteado com `random.randint`, de forma independente das outras, por isso podem se repetir.
 
     Como os valores são sorteados de forma independente, duas pistas podem ficar com o mesmo valor. O modelo trata o grupo das pistas como qualquer outro grupo (todos diferentes), por isso nesse caso o puzzle fica impossível. Essa situação é tratada na secção 5(R5,R6).
-    "\"\")
     """)
     return
 
@@ -211,7 +210,7 @@ def _(random):
         # rejeita um k negativo ou maior do que o número de células
         if k < 0 or k > N * N:
             raise ValueError("k tem de estar entre 0 e o número de células da grelha")
-        
+    
         # lista com todas as células (i, j) da grelha
         lista = []
         for i in range(N):
@@ -244,7 +243,7 @@ def _(pistas):
     return
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(mo):
     mo.md(r"""
     ## 5. Modelo CSP e resolução (R5, R6)
@@ -254,7 +253,6 @@ def _(mo):
     - o construtor `sudoku(n=3)`, que cria o modelo e uma variável inteira por célula, cada uma no intervalo $[1, n^2]$. As variáveis ficam num dicionário `x`, com a posição $(i, j)$ como chave;
     - o método `junta(*grupos)`, que recebe um número arbitrário de grupos. Para cada grupo, impõe a restrição "todos diferentes" (`AddAllDifferent`) sobre as variáveis das suas células e fixa as células que tiverem valor atribuído. O método só usa o dicionário `celulas` do grupo, por isso não distingue se é um `box`, um `cube`, um `path` ou um grupo de pistas;
     - o método `resolve()`, que chama o solver e devolve a grelha preenchida, como lista de listas, ou `None` se o puzzle não tiver solução.
-    "\"\")
     """)
     return
 
@@ -275,7 +273,7 @@ def _(cp_model):
                 for j in range(N):
                     self.x[(i, j)] = self.modelo.NewIntVar(1, N, "x_%i_%i" % (i, j)) #guarda a variável no dicionário, para encontrar                                                                                        depois pela posição 
 
-    
+
         #2: recebe um número arbitrário de grupos; para cada grupo impõe "todos diferentes"
         #e fixa as células que tiverem valor atribuído
         def junta(self, *grupos):
@@ -288,7 +286,7 @@ def _(cp_model):
                         self.modelo.Add(self.x[(i,j)] == g.celulas[(i,j)])
 
                 #acrescenta ao modelo a restrição "todos diferentes" sobre a lista
-                self.modelo.add_all_different(variaveis)
+                self.modelo.AddAllDifferent(variaveis)
 
         #3: resolve o modelo; devolve a grelha preenchida, ou None se o puzzle não tiver solução
         def resolve(self):
@@ -337,7 +335,7 @@ def _(cube, path, pistas, sudoku):
     return
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(mo):
     mo.md(r"""
     ### Sudoku completo (R6)
@@ -347,7 +345,6 @@ def _(mo):
     **Puzzle sem solução.** As pistas são sorteadas ao acaso, por isso o puzzle pode não ter solução (por exemplo, quando duas pistas ficam com o mesmo valor). Nesse caso optámos por sortear pistas novas e tentar outra vez, em vez de apenas reportar o insucesso, porque o objetivo é obter um Sudoku resolvido. A função `gera_sudoku(k=None, n=3, tentativas=20)` faz isso e devolve as pistas usadas e a grelha. Cada tentativa cria um modelo novo, porque não se podem retirar restrições de um modelo. O número de tentativas é limitado para o programa nunca ficar preso: se nenhuma tiver solução, a função devolve `None, None`. É o que acontece sempre que $k > n^2$, porque as pistas têm de ser todas diferentes e só há $n^2$ valores.
 
     **Apresentação.** A função `mostra(grelha, n=3)` escreve a grelha em texto, com separadores entre os blocos. Escolhemos texto por ser simples, funcionar para qualquer $n$ e deixar ver os blocos. A mesma função mostra as pistas, a partir do `matriz()` do grupo, em que os zeros são as células por preencher.
-    "\"\")
     """)
     return
 
@@ -406,15 +403,11 @@ def _(cube, path, pistas, sudoku):
                 texto = texto + "%2i " % grelha[i][j]
             print(texto)
 
-    return gera_sudoku, mostra, resolve_sudoku
+    return gera_sudoku, mostra
 
 
 @app.cell
-def _(gera_sudoku, mostra, pistas, resolve_sudoku):
-    _p = pistas()
-    print(_p.celulas)
-    print(resolve_sudoku(_p))
-
+def _(gera_sudoku, mostra):
     # Sudoku 9x9 completo: sorteia pistas, resolve e mostra
     _p, _g = gera_sudoku()
     if _g is None:
@@ -425,6 +418,153 @@ def _(gera_sudoku, mostra, pistas, resolve_sudoku):
         print()
         print("Solução:")
         mostra(_g)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## 6. Testes e validação
+
+    Esta secção verifica automaticamente o que o enunciado pede: que a grelha resolvida é uma solução válida, que as pistas se mantêm, que o `add` rejeita células inválidas, e que o fluxo completo funciona com mais do que um valor de $n$.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### 6.1 Validação da solução: linhas, colunas, blocos e pistas
+
+    A função `valida(grelha, p, n=3)` devolve `True` só se:
+
+    - cada linha, cada coluna e cada bloco $n \times n$ tiver exatamente os valores de $1$ a $n^2$, sem repetições;
+    - cada célula fixada pelas pistas `p` tiver, na grelha, o valor com que foi fixada.
+
+    Para testar um conjunto de células, ordenam-se os seus valores e compara-se o resultado com a lista $[1, \ldots, n^2]$. A validação percorre a grelha diretamente pelos índices, sem usar `path` nem `cube`, para não depender do código que está a ser testado.
+
+    O teste a seguir à função confirma que ela aceita uma solução correta e rejeita uma grelha estragada de propósito.
+    """)
+    return
+
+
+@app.function
+# Verifica se a grelha é uma solução válida do Sudoku e respeita as pistas p
+def valida(grelha, p, n=3):
+    N = n * n
+    certo = list(range(1, N + 1))
+
+    # cada linha tem exatamente os valores de 1 a N
+    for i in range(N):
+        valores = []
+        for j in range(N):
+            valores.append(grelha[i][j])
+        if sorted(valores) != certo:
+            return False
+
+    # cada coluna tem exatamente os valores de 1 a N
+    for j in range(N):
+        valores = []
+        for i in range(N):
+            valores.append(grelha[i][j])
+        if sorted(valores) != certo:
+            return False
+
+    # cada bloco n x n tem exatamente os valores de 1 a N
+    for bi in range(n):
+        for bj in range(n):
+            valores = []
+            for a in range(n):
+                for b in range(n):
+                    valores.append(grelha[bi * n + a][bj * n + b])
+            if sorted(valores) != certo:
+                return False
+
+    # as células das pistas mantêm o valor com que foram fixadas
+    for (i, j) in p.celulas:
+        if p.celulas[(i, j)] is not None:
+            if grelha[i][j] != p.celulas[(i, j)]:
+                return False
+
+    # passou em todas as verificações
+    return True
+
+
+@app.cell
+def _(gera_sudoku):
+    # A valida aceita uma solução correta e rejeita uma grelha estragada
+    _p, _g = gera_sudoku()
+    print("solução correta é aceite:", valida(_g, _p))
+
+    # estraga a grelha de propósito: a coluna 0 fica com um valor repetido
+    _g[0][0] = _g[1][0]
+    print("grelha estragada é rejeitada:", not valida(_g, _p))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### 6.2 O `add` rejeita coordenadas e valores inválidos
+
+    A função `rejeita(i, j, val=None, n=3)` tenta acrescentar uma célula a um `box` vazio e devolve `True` se o `add` levantar `ValueError`. Os testes confirmam que são rejeitadas coordenadas fora da grelha (acima do limite ou negativas) e valores fora de $[1, n^2]$, e que uma célula válida é aceite. Testa-se também que o `path` rejeita um troço que não é reto.
+    """)
+    return
+
+
+@app.function
+# Tenta acrescentar uma célula a um box vazio; devolve True se o add a rejeitar
+def rejeita(i, j, val=None, n=3):
+    try:
+        box(n=n).add(i, j, val)
+        return False
+    except ValueError:
+        return True
+
+
+@app.cell
+def _(path):
+    # O add rejeita coordenadas fora da grelha e valores fora de [1, n^2]
+    print("linha fora da grelha:", rejeita(9, 0))
+    print("coluna fora da grelha:", rejeita(0, 9))
+    print("coordenada negativa:", rejeita(-1, 0))
+    print("valor abaixo de 1:", rejeita(0, 0, 0))
+    print("valor acima de n^2:", rejeita(0, 0, 10))
+    print("célula válida é aceite:", not rejeita(0, 0, 5))
+
+    # O path rejeita um troço que não é reto
+    try:
+        path((0, 0), (1, 1))
+        print("troço diagonal é rejeitado:", False)
+    except ValueError:
+        print("troço diagonal é rejeitado:", True)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### 6.3 Fluxo completo com $n=3$ e $n=2$
+
+    A função `fluxo(n)` corre o fluxo completo: sortear pistas, montar linhas, colunas, blocos e pistas, resolver, validar e mostrar a grelha. É corrida com $n=3$ (Sudoku clássico $9 \times 9$) e com $n=2$ (grelha $4 \times 4$), o que confirma que nada está fixo a $9 \times 9$.
+    """)
+    return
+
+
+@app.cell
+def _(gera_sudoku, mostra):
+    # Fluxo completo: sortear pistas -> montar -> resolver -> validar -> mostrar
+    def fluxo(n):
+        p, g = gera_sudoku(n=n)
+        if g is None:
+            print("n =", n, ": não foi encontrado um puzzle com solução")
+        else:
+            print("n =", n, ": solução válida?", valida(g, p, n))
+            mostra(g, n)
+
+    fluxo(3)
+    print()
+    fluxo(2)
     return
 
 
