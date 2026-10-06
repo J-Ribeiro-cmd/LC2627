@@ -549,7 +549,7 @@
     },
     {
       "id": "rEll",
-      "code_hash": "e3ae5a370a7e20766c6bb487b07d2c4d",
+      "code_hash": "2e937afe3720b692690d78a6ca82be83",
       "outputs": [
         {
           "type": "data",
@@ -600,7 +600,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<marimo-ui-element object-id='lgWD-0' random-id='17d605b4-de22-96dc-3358-44ecd1834b1f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H0&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.1114,&#92;&quot;Aulas alteradas&#92;&quot;:0,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H1 do zero&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.1635,&#92;&quot;Aulas alteradas&#92;&quot;:28,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H1 incremental&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0684,&#92;&quot;Aulas alteradas&#92;&quot;:2,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;v3 do zero&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.2251,&#92;&quot;Aulas alteradas&#92;&quot;:33,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;v3 incremental&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0524,&#92;&quot;Aulas alteradas&#92;&quot;:2,&#92;&quot;Buracos&#92;&quot;:12}]&quot;' data-total-rows='5' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+            "text/html": "<marimo-ui-element object-id='lgWD-0' random-id='c7ec426a-4009-c934-c1bf-195d928c7676'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H0&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.154,&#92;&quot;Aulas alteradas&#92;&quot;:0,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H1 do zero&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0935,&#92;&quot;Aulas alteradas&#92;&quot;:28,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;H1 incremental&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0484,&#92;&quot;Aulas alteradas&#92;&quot;:2,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;v3 do zero&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.1846,&#92;&quot;Aulas alteradas&#92;&quot;:33,&#92;&quot;Buracos&#92;&quot;:0},{&#92;&quot;Hor\u00e1rio&#92;&quot;:&#92;&quot;v3 incremental&#92;&quot;,&#92;&quot;Tempo mediano (s)&#92;&quot;:0.0923,&#92;&quot;Aulas alteradas&#92;&quot;:2,&#92;&quot;Buracos&#92;&quot;:12}]&quot;' data-total-rows='5' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
           }
         }
       ],
@@ -647,6 +647,19 @@
           "type": "data",
           "data": {
             "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"8-conclusao\">8. Conclus\u00e3o</h2>\n<span class=\"paragraph\">A tabela da sec\u00e7\u00e3o 7 permite comparar as duas formas de obter um hor\u00e1rio novo depois de uma altera\u00e7\u00e3o aos recursos. Os valores abaixo s\u00e3o os obtidos nas execu\u00e7\u00f5es feitas durante o desenvolvimento.</span>\n<ul>\n<li><strong>Aulas alteradas.</strong> \u00c9 a diferen\u00e7a mais clara. Com <code>dados_v2/</code>, resolver do zero muda 28 aulas em rela\u00e7\u00e3o a <marimo-tex class=\"arithmatex\">||(H_0||)</marimo-tex>, enquanto a constru\u00e7\u00e3o incremental muda 2, que s\u00e3o as aulas de Matem\u00e1tica da sexta-feira nos tempos em que a Prof. Ana deixou de estar dispon\u00edvel. Com <code>dados_v3/</code>, do zero mudam 33 aulas e na incremental 2.</li>\n<li><strong>Tempo.</strong> Nas medi\u00e7\u00f5es feitas, a mediana do tempo da constru\u00e7\u00e3o incremental foi inferior \u00e0 da resolu\u00e7\u00e3o do zero nos dois cen\u00e1rios. Todos os tempos ficam abaixo de meio segundo e variam de execu\u00e7\u00e3o para execu\u00e7\u00e3o, por isso com dados deste tamanho a diferen\u00e7a de tempo \u00e9 uma evid\u00eancia mais fraca do que o n\u00famero de aulas alteradas.</li>\n<li><strong>Buracos.</strong> \u00c9 o pre\u00e7o da constru\u00e7\u00e3o incremental. Os hor\u00e1rios resolvidos do zero minimizam O1 e ficam com 0 buracos. Os incrementais minimizam as aulas alteradas e n\u00e3o olham aos buracos: com <code>dados_v2/</code> ficam com 0 ou 1, e com <code>dados_v3/</code> chegam a 12, porque as aulas da turma nova s\u00e3o colocadas nos tempos que sobram. O enunciado admite esta troca, ao n\u00e3o exigir que <marimo-tex class=\"arithmatex\">||(H_1||)</marimo-tex> seja \u00f3timo em rela\u00e7\u00e3o a O1.</li>\n</ul>\n<span class=\"paragraph\">Todos os hor\u00e1rios gerados passam na verifica\u00e7\u00e3o autom\u00e1tica de R1 a R7.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "urSm",
+      "code_hash": "68b88cb86c6c3cb18dc7551c1e76ae6f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"9-utilizacao-de-ferramentas-de-ia\">9. Utiliza\u00e7\u00e3o de ferramentas de IA</h2>\n<span class=\"paragraph\">No desenvolvimento deste trabalho recorreu-se ao apoio de modelos de linguagem (LLM), usados como ferramenta de consulta e de revis\u00e3o: para esclarecer d\u00favidas sobre o CP-SAT e o Marimo, depurar erros, organizar o c\u00f3digo em fun\u00e7\u00f5es e rever a reda\u00e7\u00e3o das explica\u00e7\u00f5es. As decis\u00f5es de modela\u00e7\u00e3o e a valida\u00e7\u00e3o dos resultados foram verificadas pelos autores.</span>\n<span class=\"paragraph\">Por transpar\u00eancia, ficam as conversas que serviram de apoio:</span>\n<ul>\n<li>Claude (Anthropic): <a href=\"https://claude.ai/share/3e88341a-10b5-4ac2-b97d-821a4856df24\" rel=\"noopener noreferrer\" target=\"_blank\">https://claude.ai/share/3e88341a-10b5-4ac2-b97d-821a4856df24</a></li>\n<li>Gemini (Google): <a href=\"https://share.gemini.google/MuGTbAdONH2P\" rel=\"noopener noreferrer\" target=\"_blank\">https://share.gemini.google/MuGTbAdONH2P</a></li>\n</ul></span>"
           }
         }
       ],

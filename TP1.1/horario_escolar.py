@@ -9,7 +9,7 @@ __generated_with = "0.25.0"
 app = marimo.App(width="medium")
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     # Trabalho Prático: Gerador de Horário Escolar
@@ -38,7 +38,7 @@ def _():
     return cp_model, mo
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 2. Leitura e Preparação dos Dados (R8)
@@ -59,6 +59,7 @@ def _():
     from pathlib import Path
 
 
+    # Nota: a leitura e validação dos CSV foi desenvolvida com apoio de um assistente de IA e revista pelos autores.
     def _ler_csv_com_validacao(
         caminho_ficheiro: Path, colunas_obrigatorias: set[str]
     ) -> list[dict[str, str]]:
@@ -177,7 +178,7 @@ def _():
     return dados_h0, dados_h1, dados_h3
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 3. Modelo CP-SAT
@@ -209,7 +210,7 @@ def criar_variaveis(model, dados):
     return x
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### R1: uma turma não pode ter duas aulas em simultâneo
@@ -234,7 +235,7 @@ def restricao_r1(model, x, dados):
                 model.Add(sum(x[_t, _d, _dia, _p] for _d in disciplinas) <= 1)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### R2: cada disciplina cumpre exatamente a carga semanal
@@ -263,7 +264,7 @@ def restricao_r2(model, x, dados):
             )
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### R3 e R4: uma aula por dia e blocos de duplo período
@@ -310,6 +311,8 @@ def restricao_r3_r4(model, x, dados):
 
                 else:
                     # R3 e R4 para disciplinas com duplo_periodo=sim:
+                    # Nota: a R3 é da autoria do grupo; a formulação da R4 (blocos de 2 tempos)
+                    # foi desenvolvida com apoio de um assistente de IA e revista pelos autores.
                     # Criar variáveis booleanas para o início do bloco duplo (períodos 1 a 4)
                     bloco_inicio = {
                         _p: model.NewBoolVar(f"bloco_{_t}_{_d_nome}_{_dia}_{_p}")
@@ -333,7 +336,7 @@ def restricao_r3_r4(model, x, dados):
                     model.Add(x[(_t, _d_nome, _dia, 5)] == bloco_inicio[4])
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### R5 e R6: professores
@@ -385,7 +388,7 @@ def restricao_r5_r6(model, x, dados):
                     model.Add(x[_t, _d, _dia, _p] == 0)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### R7: capacidade das salas
@@ -451,7 +454,7 @@ def restricao_r7(model, x, dados):
             )
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### O1: minimizar os buracos nos horários dos professores
@@ -497,6 +500,7 @@ def _(mo):
 
 @app.function
 def total_buracos(model, x, dados):
+    # Nota: esta função foi desenvolvida com apoio de um assistente de IA e revista pelos autores.
     turmas = dados["turmas"]
     dias = dados["dias"]
     periodos = dados["periodos"]
@@ -546,7 +550,7 @@ def total_buracos(model, x, dados):
     return sum(buracos)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### Construção do modelo
@@ -581,7 +585,7 @@ def _(cp_model):
     return (construir_modelo,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 4. Resolução e construção incremental (R9)
@@ -610,6 +614,7 @@ def _(mo):
 @app.cell
 def _(construir_modelo, cp_model):
     def resolver(dados, base=None):
+        # Nota: esta função foi desenvolvida com apoio de um assistente de IA e revista pelos autores.
         # 1. Modelo novo: cada chamada tem o seu modelo e as suas variáveis
 
         model, x = construir_modelo(dados)
@@ -661,7 +666,7 @@ def _(construir_modelo, cp_model):
     return (resolver,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 5. Apresentação do horário
@@ -674,6 +679,7 @@ def _(mo):
 
 @app.function
 def mostrar_horario(dados, horario, titulo):
+    # Nota: esta função foi desenvolvida com apoio de um assistente de IA e revista pelos autores.
     turmas = dados["turmas"]
     disciplinas = [_d["disciplina"] for _d in dados["disciplinas"]]
     dias = dados["dias"]
@@ -728,7 +734,7 @@ def mostrar_horario(dados, horario, titulo):
         print(f"ERRO: {titulo} sem solução (modelo INVIÁVEL ou tempo esgotado).")
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### Contagem de buracos
@@ -739,6 +745,7 @@ def _(mo):
 
 @app.function
 def contar_buracos(dados, horario):
+    # Nota: esta função foi desenvolvida com apoio de um assistente de IA e revista pelos autores.
     if horario is None:
         return None
 
@@ -773,7 +780,7 @@ def contar_buracos(dados, horario):
     return total
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### Verificação automática das restrições
@@ -856,6 +863,7 @@ def verificar_horario(dados, horario):
             erros.append(f"R6: {prof} dá aula a {turma} em {dia} {p}, mas está indisponível")
 
     # R7: em cada tempo, as aulas em cada tipo de sala não excedem a quantidade
+    # Nota: a verificação da R7 foi desenvolvida com apoio de um assistente de IA e revista pelos autores.
     # Quantidade de salas normais (soma de todas as de tipo "normal")
     # e quantidade de cada sala especial, pelo nome
     qtd_normais = 0
@@ -900,7 +908,7 @@ def verificar_horario(dados, horario):
     return erros
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 6. Testes
@@ -918,7 +926,7 @@ def _(dados_h0, resolver):
     return (h0,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### H1 resolvido do zero
@@ -934,7 +942,7 @@ def _(dados_h1, resolver):
     return (h1_zero,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### H1 incremental
@@ -950,7 +958,7 @@ def _(dados_h1, h0, resolver):
     return (h1_inc,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### Cenário v3 resolvido do zero
@@ -974,7 +982,7 @@ def _(dados_h3, resolver):
     return (h3_zero,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### Cenário v3 incremental
@@ -990,7 +998,7 @@ def _(dados_h3, h0, resolver):
     return (h3_inc,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### Verificação dos horários gerados
@@ -1010,10 +1018,12 @@ def _(dados_h0, dados_h1, dados_h3, h0, h1_inc, h1_zero, h3_inc, h3_zero):
     ]:
         _erros = verificar_horario(_dados, _horario)
         print(f"{_nome}: {'OK' if not _erros else _erros}")
+
+
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 7. Comparação: do zero vs. incremental
@@ -1072,7 +1082,7 @@ def _(
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### Aulas que mudaram na construção incremental
@@ -1087,7 +1097,7 @@ def _(h0, h1_inc):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 8. Conclusão
@@ -1102,7 +1112,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 9. Utilização de ferramentas de IA
