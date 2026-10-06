@@ -30,8 +30,7 @@ def _(mo):
 @app.cell
 def _():
     import marimo as mo
-    import time
-    import os
+    
 
     from ortools.sat.python import cp_model
 
