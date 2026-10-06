@@ -105,7 +105,7 @@ class box: # vai permitir criar vários grupos
         return m
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 3. `cube` e `path`: blocos, linhas e colunas (R2, R3)
@@ -180,7 +180,7 @@ def _(cube, path):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 4. Geração aleatória de pistas (R4)
@@ -210,7 +210,7 @@ def _(random):
         # rejeita um k negativo ou maior do que o número de células
         if k < 0 or k > N * N:
             raise ValueError("k tem de estar entre 0 e o número de células da grelha")
-    
+
         # lista com todas as células (i, j) da grelha
         lista = []
         for i in range(N):
@@ -243,7 +243,7 @@ def _(pistas):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 5. Modelo CSP e resolução (R5, R6)
@@ -262,19 +262,22 @@ def _(cp_model):
     # R5: modelo CSP para uma grelha n^2 x n^2, com uma variável inteira por célula
     class sudoku:
 
-        #1: Construtor: cria o modelo e as variáveis, uma por célula, com valores em [1, n^2]
+        #1: (Criar Variveis) Construtor: cria o modelo e as variáveis, uma por célula, com valores em [1, n^2]
         def __init__(self, n=3):
             self.n = n
-            self.modelo = cp_model.CpModel()#cria um modelo vazio do CP-SAT e guarda-o no objeto para os outros métodos o poderem usar                                              depois,neste modelo vão ficar as variávies(mais tarde restrições)
-            self.x = {}  #cria um dicionário vazio para as variáveis e guarda-o(serve para encontrar cada varivel no modelo pela posicao)
+            # cria um modelo vazio do CP-SAT e guarda-o no objeto, para os outros métodos o usarem
+            # aqui ficam guardadas as variáveis(mais tarde restrições)
+            self.modelo = cp_model.CpModel()
+            # cria dicionário vazio para as variáveis: serve para encontrar cada variável pela posição
+            self.x = {} 
             N = self.n * self.n
             #para cada celula(i,j) da grelha, cria uma variável inteira entre 1 a N e guarda-a no dicionário, com a chave (i,j)
             for i in range(N):
                 for j in range(N):
-                    self.x[(i, j)] = self.modelo.NewIntVar(1, N, "x_%i_%i" % (i, j)) #guarda a variável no dicionário, para encontrar                                                                                        depois pela posição 
+                    self.x[(i, j)] = self.modelo.NewIntVar(1, N, "x_%i_%i" % (i, j)) #guarda a variável no dicionário, para encontrar                                                                                        depois a celulas pela posição 
 
 
-        #2: recebe um número arbitrário de grupos; para cada grupo impõe "todos diferentes"
+        #2: (Guarda restrições) recebe um número arbitrário de grupos; para cada grupo impõe "todos diferentes"
         #e fixa as células que tiverem valor atribuído
         def junta(self, *grupos):
             for g in grupos:
@@ -288,7 +291,7 @@ def _(cp_model):
                 #acrescenta ao modelo a restrição "todos diferentes" sobre a lista
                 self.modelo.AddAllDifferent(variaveis)
 
-        #3: resolve o modelo; devolve a grelha preenchida, ou None se o puzzle não tiver solução
+        #3: (Resolver) resolve o modelo; devolve a grelha preenchida, ou None se o puzzle não tiver solução
         def resolve(self):
             solver = cp_model.CpSolver() #Cria o solver, o programa que vai procurar a solução
             estado = solver.Solve(self.modelo) #manda o solver resolver o modelo,devolve um codigo como correu, que fica guardado em estado
@@ -299,7 +302,7 @@ def _(cp_model):
                 grelha = []
                 for i in range(N):
                     linha = []
-                    for j in range(N):
+                    for j in range(N):#usar valores para todas as variáveis 
                         linha.append(solver.Value(self.x[(i, j)]))
                     grelha.append(linha)
                 return grelha
@@ -312,16 +315,7 @@ def _(cp_model):
 
 
 @app.cell
-def _(cube, path, pistas, sudoku):
-    _s = sudoku()
-    print(len(_s.x))
-    print(_s.x[(0, 0)])
-
-    _s = sudoku()
-    _s.junta(cube(0, 0), path((0, 0), (0, 8)))
-    _s.junta(pistas())
-    print("sem erros")
-
+def _(path, sudoku):
     # Com solução: só a linha 0 tem a restrição "todos diferentes"
     _s = sudoku()
     _s.junta(path((0, 0), (0, 8)))
@@ -335,14 +329,14 @@ def _(cube, path, pistas, sudoku):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ### Sudoku completo (R6)
 
     A função `resolve_sudoku(p, n=3)` monta um Sudoku completo: cria um modelo `sudoku` e junta-lhe todas as linhas e todas as colunas (com `path`), todos os blocos (com `cube`) e o grupo de pistas `p`. Para $n=3$ são 28 grupos, todos tratados da mesma forma pelo `junta`. A montagem é uma função fora da classe `sudoku` para o modelo continuar genérico: outras variantes de Sudoku fazem-se juntando outros grupos, sem alterar a classe.
 
-    **Puzzle sem solução.** As pistas são sorteadas ao acaso, por isso o puzzle pode não ter solução (por exemplo, quando duas pistas ficam com o mesmo valor). Nesse caso optámos por sortear pistas novas e tentar outra vez, em vez de apenas reportar o insucesso, porque o objetivo é obter um Sudoku resolvido. A função `gera_sudoku(k=None, n=3, tentativas=20)` faz isso e devolve as pistas usadas e a grelha. Cada tentativa cria um modelo novo, porque não se podem retirar restrições de um modelo. O número de tentativas é limitado para o programa nunca ficar preso: se nenhuma tiver solução, a função devolve `None, None`. É o que acontece sempre que $k > n^2$, porque as pistas têm de ser todas diferentes e só há $n^2$ valores.
+    **Puzzle sem solução.** As pistas são sorteadas ao acaso, por isso o puzzle pode não ter solução (por exemplo, quando duas pistas ficam com o mesmo valor). Nesse caso optámos por sortear pistas novas e tentar outra vez, em vez de apenas reportar o insucesso, porque o objetivo é obter um Sudoku resolvido. A função `gera_sudoku(k=None, n=3, tentativas=20)` faz isso e devolve as pistas usadas e a grelha. Cada tentativa cria um modelo novo, porque não se podem retirar restrições de um modelo. O número de tentativas é limitado para o programa nunca ficar preso: se nenhuma tiver solução, a função devolve `None`. É o que acontece sempre que $k > n^2$, porque as pistas têm de ser todas diferentes e só há $n^2$ valores.
 
     **Apresentação.** A função `mostra(grelha, n=3)` escreve a grelha em texto, com separadores entre os blocos. Escolhemos texto por ser simples, funcionar para qualquer $n$ e deixar ver os blocos. A mesma função mostra as pistas, a partir do `matriz()` do grupo, em que os zeros são as células por preencher.
     """)
@@ -421,7 +415,7 @@ def _(gera_sudoku, mostra):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## 6. Testes e validação
@@ -565,6 +559,18 @@ def _(gera_sudoku, mostra):
     fluxo(3)
     print()
     fluxo(2)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## 7. Utilização de LLM
+
+    Neste trabalho usámos um LLM como apoio. Serviu para interpretar o enunciado, para construir o notebook passo a passo com a explicação de cada parte, e para rever o código e os textos. O LLM propôs a estrutura e grande parte do código e dos textos explicativos; nós escrevemos e testámos o código no notebook, corrigimos os erros que foram aparecendo e tomámos as decisões de implementação, como a posição do parâmetro $n$ e o tratamento das células repetidas.
+
+    Conversa utilizada:https://claude.ai/share/c5ccee84-2c21-472e-baa0-5eefc97f6ad3
+    """)
     return
 
 
