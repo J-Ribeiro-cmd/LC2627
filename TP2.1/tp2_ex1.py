@@ -42,7 +42,7 @@ def _():
     import random
     import time
 
-    return And, Bool, BoolVal, Not, Or, mo, random
+    return And, Bool, BoolVal, If, Not, Or, Solver, Sum, mo, random
 
 
 @app.cell(hide_code=True)
@@ -65,84 +65,6 @@ def _():
     SINCRONO = True
     SEED = 42
     return N, SEED
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ## Estado: células normais
-
-    O estado do sistema é formado pelas $N^2$ células normais, cada uma
-    representada por uma variável booleana do Z3 (viva = `True`, morta = `False`).
-
-    Tal como na ficha 7, para descrever uma execução com vários passos precisamos
-    de várias **cópias** das variáveis de estado: a função `declare(k)` cria a
-    $k$-ésima cópia. Cada cópia é uma matriz $(N+2)\times(N+2)$: nas posições das
-    células normais ficam variáveis `Bool`; nas das células iniciais e finais
-    ficam as respetivas constantes `BoolVal`.
-    """)
-    return
-
-
-@app.cell
-def _(Bool, BoolVal, N, borda):
-    def declare(k):  # cria o estado s no instante k (uma nova matriz s para cada k)
-        s = [[None] * (N + 2) for _ in range(N + 2)]
-        for i in range(N + 2):
-            for j in range(N + 2):
-                if borda[i][j] is None:
-                    # célula normal: variável (uma incógnita por célula e por instante),
-                    # ainda sem valor — é o solver que lhe dá valor mais tarde
-                    s[i][j] = Bool(f"c_{k}_{i}_{j}")
-                else:
-                    # célula inicial/final: constante, pois o seu valor nunca muda;
-                    # o 0/1 vem do gera_borda (iniciais sorteadas, finais sempre 0)
-                    # e o == 1 converte-o em True/False
-                    s[i][j] = BoolVal(borda[i][j] == 1)
-        return s
-
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ## Estado inicial e estado de erro
-
-    - **Estado inicial** — todas as células normais estão mortas, exceto as que
-      têm $i,j \le 3$, que estão vivas.
-    - **Estado de erro** — todas as células normais estão mortas.
-
-    Ambos são definidos como predicados sobre um estado $s$, que devolvem uma
-    fórmula do Z3, tal como o `init` da ficha 7:
-
-    $$init(s) \equiv \bigwedge_{i,j \le 3} s_{i,j} \;\wedge \bigwedge_{\text{restantes}} \neg s_{i,j}
-    \qquad\qquad
-    erro(s) \equiv \neg \bigvee_{i,j=1}^{N} s_{i,j}$$
-    """)
-    return
-
-
-@app.cell
-def _(And, N, Not, Or):
-    def init(s):
-        condicoes = []
-        for i in range(1, N + 1):
-            for j in range(1, N + 1):
-                if i <= 3 and j <= 3:
-                    condicoes.append(s[i][j])        # tem de estar viva
-                else:
-                    condicoes.append(Not(s[i][j]))   # tem de estar morta
-        return And(condicoes)
-
-    def erro(s):
-        vivas = []
-        for i in range(1, N + 1):
-            for j in range(1, N + 1):
-                vivas.append(s[i][j])
-        return Not(Or(vivas))
-
-    return
 
 
 @app.cell(hide_code=True)
@@ -182,7 +104,7 @@ def _(N, SEED, random):
                 # caso contrário fica None: célula normal
         return borda
 
-    borda = gera_borda(N, SEED)
+    borda = gera_borda(N, SEED) 
     return (borda,)
 
 
@@ -195,6 +117,159 @@ def _(N, borda):
 
     for _linha in borda:
         print(" ".join("." if _v is None else str(_v) for _v in _linha))
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Estado: células normais
+
+    O estado do sistema é formado pelas $N^2$ células normais, cada uma
+    representada por uma variável booleana do Z3 (viva = `True`, morta = `False`).
+
+    Tal como na ficha 7, para descrever uma execução com vários passos precisamos
+    de várias **cópias** das variáveis de estado: a função `declare(k)` cria a
+    $k$-ésima cópia. Cada cópia é uma matriz $(N+2)\times(N+2)$: nas posições das
+    células normais ficam variáveis `Bool`; nas das células iniciais e finais
+    ficam as respetivas constantes `BoolVal`.
+    """)
+    return
+
+
+@app.cell
+def _(Bool, BoolVal, N, borda):
+    #corre antes a função gera_borda, que cria a matriz borda em que as celulas normais são None e as celulas Iniciais/Finais são 0 ou 1
+
+    def declare(k):  # cria o estado s no instante k (uma nova matriz s para cada k)
+        s = [[None] * (N + 2) for _ in range(N + 2)]
+        for i in range(N + 2):
+            for j in range(N + 2):
+                if borda[i][j] is None:
+                    # célula normal: variável (ganham uma incógnita por célula e por instante),
+                    # ainda sem valor — é o solver que lhe dá valor mais tarde, e fica a saber que vai ser do tipo BOOL
+                    s[i][j] = Bool(f"c_{k}_{i}_{j}")
+                else:
+                    # célula inicial/final: constante, pois o seu valor nunca muda;
+                    # o 0/1 vem do gera_borda (iniciais sorteadas, finais sempre 0)
+                    # e o == 1 converte-o em True/False
+                    s[i][j] = BoolVal(borda[i][j] == 1)
+        return s
+
+    return (declare,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Estado inicial e estado de erro
+
+    - **Estado inicial** — todas as células normais estão mortas, exceto as que
+      têm $i,j \le 3$, que estão vivas.
+    - **Estado de erro** — todas as células normais estão mortas.
+
+    Ambos são definidos como predicados sobre um estado $s$, que devolvem uma
+    fórmula do Z3, tal como o `init` da ficha 7:
+
+    $$init(s) \equiv \bigwedge_{i,j \le 3} s_{i,j} \;\wedge \bigwedge_{\text{restantes}} \neg s_{i,j}
+    \qquad\qquad
+    erro(s) \equiv \neg \bigvee_{i,j=1}^{N} s_{i,j}$$
+    """)
+    return
+
+
+@app.cell
+def _(And, N, Not, Or):
+    def init(s):
+        condicoes = []
+        for i in range(1, N + 1):
+            for j in range(1, N + 1):
+                if i <= 3 and j <= 3:
+                    condicoes.append(s[i][j])        # tem de estar viva
+                else:
+                    condicoes.append(Not(s[i][j]))   # tem de estar morta
+        return And(condicoes)
+
+    def erro(s):
+        vivas = []
+        for i in range(1, N + 1):
+            for j in range(1, N + 1):
+                vivas.append(s[i][j])
+        return Not(Or(vivas))    #Or: "alguma está viva"; Not: "nenhuma está viva" (todas mortas)
+
+    return erro, init
+
+
+@app.cell
+def _(Solver, declare, erro, init):
+    _s = declare(0)
+    _solver = Solver()
+    _solver.add(init(_s))
+    print("init é satisfazível:", _solver.check())   # esperado: sat
+    _solver.add(erro(_s))
+    print("init ∧ erro:", _solver.check())            # esperado: unsat
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Vizinhos e regra B3/S23
+
+    Duas células são vizinhas sse $\max(|i_0-i_1|, |j_0-j_1|) = 1$, ou seja, cada
+    célula tem 8 vizinhos (incluindo as diagonais). Graças às células iniciais e
+    finais, todas as células normais têm os 8 vizinhos dentro da matriz.
+
+    A regra **B3/S23** define o próximo valor de uma célula $c$ com $n$ vizinhos vivos:
+
+    - **nasce** se está morta e $n = 3$;
+    - **sobrevive** se está viva e $n \in \{2, 3\}$;
+    - caso contrário fica (ou passa a) morta.
+    """)
+    return
+
+
+@app.cell
+def _(And, If, Not, Or, Sum):
+    def vizinhos_vivos(s, i, j):
+        # os 8 vizinhos da célula (i, j); a própria célula não conta
+        vizinhos = [
+            s[i-1][j-1], s[i-1][j], s[i-1][j+1],   # linha de cima
+            s[i][j-1],              s[i][j+1],     # esquerda e direita
+            s[i+1][j-1], s[i+1][j], s[i+1][j+1],   # linha de baixo
+        ]
+        # converte cada vizinho em 1 (vivo) ou 0 (morto) e soma
+        numeros = []
+        for v in vizinhos:
+            numeros.append(If(v, 1, 0))
+        return Sum(numeros)
+
+    def regra(s, i, j):
+        viva = s[i][j]                    # a célula está viva agora?
+        n = vizinhos_vivos(s, i, j)       # quantos vizinhos vivos tem?
+
+        nasce = And(Not(viva), n == 3)            # B3: morta e com 3 vizinhos
+        sobrevive = And(viva, Or(n == 2, n == 3)) # S23: viva e com 2 ou 3 vizinhos
+
+        return Or(nasce, sobrevive)       # no próximo instante fica viva se nascer ou sobreviver
+
+    return regra, vizinhos_vivos
+
+
+@app.cell
+def _(Solver, declare, init, regra, vizinhos_vivos):
+    _s = declare(0)
+    _solver = Solver()
+    _solver.add(init(_s)) # exige que o estado _s seja o inicial, ou seja, quadrado 3×3 no canto, com 9 celulas vivas
+    _solver.check()       # o solver procura valores que cumpram isso
+    _m = _solver.model()  # o modelo: os valores que ele encontrou
+
+    for (_i, _j) in [(2, 2), (3, 3), (4, 2), (2, 4), (10, 10), (1,5)]:
+        print((_i, _j),
+              "| atual:", _m.eval(_s[_i][_j]),
+              "| vizinhos vivos:", _m.eval(vizinhos_vivos(_s, _i, _j)),
+              "| próximo:", _m.eval(regra(_s, _i, _j)))
+
     return
 
 
