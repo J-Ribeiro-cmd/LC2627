@@ -144,7 +144,7 @@
     },
     {
       "id": "SFPL",
-      "code_hash": "5357979267a4245d7450c668ae343ab1",
+      "code_hash": "e0101c8c2268ac742ee93239e6a35ff7",
       "outputs": [
         {
           "type": "data",
@@ -190,7 +190,7 @@
     },
     {
       "id": "Qblq",
-      "code_hash": "ad6291ecdd7106603f87cd9cd441d43d",
+      "code_hash": "e0a4c8ad264a7c832c34c11fa6506dc8",
       "outputs": [
         {
           "type": "data",
@@ -203,7 +203,7 @@
     },
     {
       "id": "ZJka",
-      "code_hash": "587050c0546b11e0efcf1cb9e77c36d7",
+      "code_hash": "4e85cdee0a335dd4003895387fcd55b9",
       "outputs": [
         {
           "type": "data",
@@ -216,7 +216,7 @@
         {
           "type": "stream",
           "name": "stdout",
-          "text": "(2, 2) | atual: True | vizinhos vivos: 8 | pr\u00f3ximo: False\n(3, 3) | atual: True | vizinhos vivos: 3 | pr\u00f3ximo: True\n(4, 2) | atual: False | vizinhos vivos: 3 | pr\u00f3ximo: True\n(2, 4) | atual: False | vizinhos vivos: 3 | pr\u00f3ximo: True\n(10, 10) | atual: False | vizinhos vivos: 0 | pr\u00f3ximo: False\n(1, 5) | atual: False | vizinhos vivos: 0 | pr\u00f3ximo: False\n",
+          "text": "(2, 2) | atual: True | vizinhos vivos: 8 | pr\u00f3ximo: False\n(3, 3) | atual: True | vizinhos vivos: 3 | pr\u00f3ximo: True\n(4, 2) | atual: False | vizinhos vivos: 3 | pr\u00f3ximo: True\n(2, 4) | atual: False | vizinhos vivos: 3 | pr\u00f3ximo: True\n(10, 10) | atual: False | vizinhos vivos: 0 | pr\u00f3ximo: False\n",
           "mimetype": "text/plain"
         }
       ]
@@ -236,7 +236,7 @@
     },
     {
       "id": "oVOE",
-      "code_hash": "60af8397778513b6a83228d67778cee1",
+      "code_hash": "fb12133ad0908286b4b531ab4ed02ccf",
       "outputs": [
         {
           "type": "data",
@@ -261,8 +261,60 @@
       "console": []
     },
     {
-      "id": "qYKp",
-      "code_hash": "b01b79ea19c18b321a3866f0eb0c3777",
+      "id": "dzzd",
+      "code_hash": "3b0706d21c21a6d82ab9a4acbdc1b39b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"transicao-assincrona\">Transi\u00e7\u00e3o ass\u00edncrona</h2>\n<span class=\"paragraph\">Em cada transi\u00e7\u00e3o <strong>uma e s\u00f3 uma</strong> c\u00e9lula normal transita: existe uma c\u00e9lula\n<marimo-tex class=\"arithmatex\">||((a,b)||)</marimo-tex> que aplica a regra B3/S23, e todas as outras mant\u00eam o seu valor:</span>\n<marimo-tex class=\"arithmatex\">||[trans_{assinc}(s, t) \\equiv \\bigvee_{a,b=1}^{N} \\Big( t_{a,b} = regra(s,a,b) \\;\\wedge\n\\bigwedge_{(i,j) \\neq (a,b)} t_{i,j} = s_{i,j} \\Big)||]</marimo-tex><span class=\"paragraph\">A escolha da c\u00e9lula \u00e9 feita pelo solver, o que torna esta transi\u00e7\u00e3o\n<strong>n\u00e3o-determinista</strong>: um estado pode ter v\u00e1rios sucessores.</span>\n<span class=\"paragraph\">Interpretamos \"transitar\" como <em>aplicar a regra</em>: se a regra mantiver o valor\nda c\u00e9lula escolhida, o estado seguinte \u00e9 igual ao atual. Assim todos os estados\nt\u00eam pelo menos um sucessor, como \u00e9 habitual exigir num sistema de transi\u00e7\u00e3o.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "agIS",
+      "code_hash": "449c5ba2dba3566c90bdacf6af62bc0b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "xqYE",
+      "code_hash": "10206b01669113d3cd17b58641afd7b7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"selecao-da-relacao-de-transicao\">Sele\u00e7\u00e3o da rela\u00e7\u00e3o de transi\u00e7\u00e3o</h2>\n<span class=\"paragraph\">A fun\u00e7\u00e3o <code>trans</code> escolhe a rela\u00e7\u00e3o de transi\u00e7\u00e3o de acordo com o par\u00e2metro\n<code>SINCRONO</code>, como pedido no enunciado: <code>True</code> para a transi\u00e7\u00e3o s\u00edncrona,\n<code>False</code> para a ass\u00edncrona. As fun\u00e7\u00f5es seguintes (tra\u00e7os e verifica\u00e7\u00e3o das\npropriedades) usam sempre <code>trans</code>, pelo que basta mudar o par\u00e2metro para\ntrocar de interpreta\u00e7\u00e3o.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Vvag",
+      "code_hash": "361b37a002429f5f59c3d7539ae3e617",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "UAAg",
+      "code_hash": "6d145d935baf1d535360894768661cbd",
       "outputs": [
         {
           "type": "data",
@@ -275,7 +327,7 @@
         {
           "type": "stream",
           "name": "stdout",
-          "text": "Estado 0:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n+ \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 1:\n- - + - - - - - + - - - - - - - + - - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . \u25a0 . . . . . . . . . . . . . - \n- . . \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 2:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 3:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . \u25a0 . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\n",
+          "text": "Estado 0:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n+ \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 1:\n- - + - - - - - + - - - - - - - + - - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . \u25a0 . . . . . . . . . . . . . - \n- . . \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \nc\u00e9lulas que mudaram: 13\n\nEstado 2:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \nc\u00e9lulas que mudaram: 8\n\nEstado 3:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . \u25a0 . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \nc\u00e9lulas que mudaram: 9\n\n",
           "mimetype": "text/plain"
         }
       ]

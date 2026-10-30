@@ -77,7 +77,7 @@ def _():
     N = 17
     SINCRONO = True
     SEED = 42
-    return N, SEED
+    return N, SEED, SINCRONO
 
 
 @app.cell(hide_code=True)
@@ -257,7 +257,7 @@ def _(And, If, Not, Or, Sum):
             numeros.append(If(v, 1, 0))
         return Sum(numeros)
 
-    def regraB3_S23(s, i, j):
+    def regra_B3S23(s, i, j):
         viva = s[i][j]                    # a célula está viva agora?
         n = vizinhos_vivos(s, i, j)       # quantos vizinhos vivos tem?
 
@@ -266,22 +266,22 @@ def _(And, If, Not, Or, Sum):
 
         return Or(nasce, sobrevive)       # no próximo instante fica viva se nascer ou sobreviver
 
-    return regraB3_S23, vizinhos_vivos
+    return regra_B3S23, vizinhos_vivos
 
 
 @app.cell
-def _(Solver, declare, init, regraB3_S23, vizinhos_vivos):
+def _(Solver, declare, init, regra_B3S23, vizinhos_vivos):
     _s = declare(0)
     _solver = Solver()
     _solver.add(init(_s)) # exige que o estado _s seja o inicial, ou seja, quadrado 3×3 no canto, com 9 celulas vivas
     _solver.check()       # o solver procura valores que cumpram isso
     _m = _solver.model()  # o modelo: os valores que ele encontrou
 
-    for (_i, _j) in [(2, 2), (3, 3), (4, 2), (2, 4), (10, 10), (1,5)]:
+    for (_i, _j) in [(2, 2), (3, 3), (4, 2), (2, 4), (10, 10)]:
         print((_i, _j),
               "| atual:", _m.eval(_s[_i][_j]),
               "| vizinhos vivos:", _m.eval(vizinhos_vivos(_s, _i, _j)),
-              "| próximo:", _m.eval(regraB3_S23(_s, _i, _j)))
+              "| próximo:", _m.eval(regra_B3S23(_s, _i, _j)))
 
     return
 
@@ -304,14 +304,14 @@ def _(mo):
 
 
 @app.cell
-def _(And, N, regraB3_S23):
+def _(And, N, regra_B3S23):
     def trans_sincrono(s, t):
         condicoes = []
         for i in range(1, N + 1):
             for j in range(1, N + 1):
                 # a célula (i,j) no estado seguinte tem o valor que a regra
                 # calcula a partir do estado atual
-                condicoes.append(t[i][j] == regraB3_S23(s, i, j))
+                condicoes.append(t[i][j] == regra_B3S23(s, i, j))
         return And(condicoes)
 
     return (trans_sincrono,)
@@ -345,29 +345,113 @@ def _(N, borda, is_true):
     return (mostra_estado,)
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Transição assíncrona
+
+    Em cada transição **uma e só uma** célula normal transita: existe uma célula
+    $(a,b)$ que aplica a regra B3/S23, e todas as outras mantêm o seu valor:
+
+    $$trans_{assinc}(s, t) \equiv \bigvee_{a,b=1}^{N} \Big( t_{a,b} = regra(s,a,b) \;\wedge
+    \bigwedge_{(i,j) \neq (a,b)} t_{i,j} = s_{i,j} \Big)$$
+
+    A escolha da célula é feita pelo solver, o que torna esta transição
+    **não-determinista**: um estado pode ter vários sucessores.
+
+    Interpretamos "transitar" como *aplicar a regra*: se a regra mantiver o valor
+    da célula escolhida, o estado seguinte é igual ao atual. Assim todos os estados
+    têm pelo menos um sucessor, como é habitual exigir num sistema de transição.
+    """)
+    return
+
+
 @app.cell
-def _(Solver, declare, init, mostra_estado, sat, trans_sincrono):
+def _(And, N, Or, regra_B3S23):
+    def trans_assincrono(s, t):
+        #lista todas as opções de celulas (a,b) que podem ser escolhidas
+        opcoes = []
+        for a in range(1, N + 1):
+            for b in range(1, N + 1):
+                #condicoes para a opcao escolhida
+                condicoes = []
+                for i in range(1, N + 1):
+                    for j in range(1, N + 1):
+                        if i == a and j == b:
+                            # a célula escolhida aplica a regra
+                            condicoes.append(t[i][j] == regra_B3S23(s, i, j))
+                        else:
+                            # todas as outras mantêm o valor
+                            condicoes.append(t[i][j] == s[i][j])
+                # juntas as condições: "(a,b) aplica a regra as outras ficam iguais"
+                opcoes.append(And(condicoes))
+        # basta que uma das opções se verifique, para o solver a escolher
+        return Or(opcoes)
+
+    return (trans_assincrono,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Seleção da relação de transição
+
+    A função `trans` escolhe a relação de transição de acordo com o parâmetro
+    `SINCRONO`, como pedido no enunciado: `True` para a transição síncrona,
+    `False` para a assíncrona. As funções seguintes (traços e verificação das
+    propriedades) usam sempre `trans`, pelo que basta mudar o parâmetro para
+    trocar de interpretação.
+    """)
+    return
+
+
+@app.cell
+def _(SINCRONO, trans_assincrono, trans_sincrono):
+    def trans(s, t):
+        # escolhe a relação de transição de acordo com o parâmetro SINCRONO
+        if SINCRONO:
+            return trans_sincrono(s, t)     # todas as células transitam ao mesmo tempo
+        else:
+            return trans_assincrono(s, t)   # uma e só uma célula transita
+
+    return (trans,)
+
+
+@app.cell
+def _(N, Solver, declare, init, is_true, mostra_estado, sat, trans):
     # Teste: gera um traço de execução com _K estados, a partir do estado inicial,
-    # usando a transição síncrona
+    # usando a transição escolhida pelo parâmetro SINCRONO
 
     _K = 4   # número de estados do traço
-    _estados = [declare(k) for k in range(_K)] #criar k copias de estado com o declare
+    _estados = [declare(k) for k in range(_K)]   # cria _K cópias do estado com o declare
 
     _solver = Solver()
-    _solver.add(init(_estados[0])) #o primeiro estado vai ser inicial
+    _solver.add(init(_estados[0]))   # o primeiro estado tem de ser o inicial
 
-    #liga os estados uns aos outros com transições, se há k estados existem k-1 ligações
+    # liga os estados uns aos outros com transições: se há _K estados existem _K-1 ligações
     for _k in range(_K - 1):
-        _solver.add(trans_sincrono(_estados[_k], _estados[_k + 1]))
+        _solver.add(trans(_estados[_k], _estados[_k + 1]))
 
-    #pede ao solver valores para todas as incógnitas que cumpram as condições acima
+    # pede ao solver valores para todas as incógnitas que cumpram as condições acima
+    #check(), o solver procura valores para todas as incógnitas dos estados 1, 2 e 3 de forma a que todas as condições sejam verdadeiras
     if _solver.check() == sat:
-        _m = _solver.model() #o modelo: valores encontrados
+        _m = _solver.model()   # o modelo: os valores encontrados 
         for _k in range(_K):
             print(f"Estado {_k}:")
             print(mostra_estado(_m, _estados[_k]))
+            if _k > 0:
+                # conta quantas células normais mudaram em relação ao estado anterior
+                _mudaram = 0
+                for _i in range(1, N + 1):
+                    for _j in range(1, N + 1):
+                        _agora = is_true(_m.eval(_estados[_k][_i][_j]))
+                        _antes = is_true(_m.eval(_estados[_k - 1][_i][_j]))
+                        if _agora != _antes:
+                            _mudaram += 1
+                print("células que mudaram:", _mudaram)
             print()
     else:
+        # unsat: não existe nenhuma execução com _K estados
         print("Nenhum traço encontrado")
     return
 
