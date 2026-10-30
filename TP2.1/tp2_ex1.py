@@ -55,6 +55,7 @@ def _():
         mo,
         random,
         sat,
+        time,
     )
 
 
@@ -453,6 +454,191 @@ def _(N, Solver, declare, init, is_true, mostra_estado, sat, trans):
     else:
         # unsat: não existe nenhuma execução com _K estados
         print("Nenhum traço encontrado")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Propriedade P1 — nunca se alcança o estado de erro
+
+    A propriedade é um invariante (propriedade de **segurança**):
+    $$G\,\neg erro$$
+
+    Usamos *bounded model checking* como na ficha 7: para tamanhos
+    $k = 1, 2, \dots, K$ procuramos um traço com $k$ estados que comece no estado
+    inicial, respeite a relação de transição e cujo último estado seja de erro.
+    O primeiro traço encontrado é um contra-exemplo **mínimo**. Se nenhum for
+    encontrado, a propriedade é válida nos primeiros $K$ estados de execução
+    (o que não prova que seja válida sempre — para isso usaremos *k-indução*).
+    """)
+    return
+
+
+@app.cell
+def _(Not, Solver, erro, mostra_estado, sat):
+    def bmc_always(declare, init, trans, inv, K):
+        # tenta encontrar um contra-exemplo com k = 1, 2, ..., K estados
+        for k in range(1, K + 1):
+            estados = [declare(i) for i in range(k)]   # k cópias do estado
+
+            solver = Solver()
+            solver.add(init(estados[0]))                # começa no estado inicial
+
+            # liga os estados com transições (k estados, k-1 ligações)
+            for i in range(k - 1):
+                solver.add(trans(estados[i], estados[i + 1]))
+
+            # o invariante falha no último estado
+            solver.add(Not(inv(estados[-1])))
+
+            if solver.check() == sat:
+                # encontrou um contra-exemplo: mostra-o
+                m = solver.model()
+                print(f"Contra-exemplo encontrado com {k} estados:")
+                for i in range(k):
+                    print(f"Estado {i}:")
+                    print(mostra_estado(m, estados[i]))
+                    print()
+                return False
+
+        print(f"Nenhum contra-exemplo encontrado com até {K} estados")
+        return True
+
+
+    def nao_erro(s):
+        # o invariante da P1: o estado não é de erro (há pelo menos uma célula viva)
+        return Not(erro(s))
+
+    return bmc_always, nao_erro
+
+
+@app.cell
+def _(SINCRONO, bmc_always, declare, init, nao_erro, time, trans):
+    # verifica a P1 com BMC até _K estados e mede o tempo
+    _K = 10
+    _inicio = time.time()
+    _resultado = bmc_always(declare, init, trans, nao_erro, _K)
+    print(f"Resultado: {_resultado}  (modo {'síncrono' if SINCRONO else 'assíncrono'})")
+    print(f"Tempo: {time.time() - _inicio:.2f} s")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    **Resultados (N = 17, SEED = 42).**
+
+    - **Síncrono:** nenhum contra-exemplo até $K = 10$ (≈6 s). A transição é
+      determinista, logo há uma única execução; o BMC não encontrou estados de erro
+      nos primeiros $K$ estados. A prova é feita com *k-indução* (ver mais abaixo).
+    - **Assíncrono:** contra-exemplo com 10 estados (≈121 s). O solver escolhe, em
+      cada passo, uma célula do bloco inicial que morre, nunca as que nasceriam junto
+      à margem. Como o bloco tem 9 células e só muda uma por transição, são precisos
+      pelo menos 9 passos: o contra-exemplo é mínimo.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Propriedade P2 — nenhuma célula fica permanentemente morta ou viva
+
+    Para cada célula normal $c$, a propriedade exige que $c$ volte sempre a estar
+    viva e volte sempre a estar morta (propriedade de **animação**):
+
+    $$\bigwedge_{c}\; \big(G\,F\,c \;\wedge\; G\,F\,\neg c\big)$$
+
+    Um contra-exemplo tem de ser uma execução **infinita** em que alguma célula
+    fica constante a partir de certo momento. Procuramos um
+    **laço**: um traço com $k$ estados $s_0, \dots, s_{k-1}$, que começa no estado
+    inicial, em que existe uma transição de $s_{k-1}$ para algum $s_l$ ($0 \le l < k$),
+    e em que existe uma célula com o mesmo valor em todos os estados do ciclo
+    $s_l, \dots, s_{k-1}$. Como o ciclo se repete indefinidamente, essa célula fica
+    com esse valor para sempre.
+    """)
+    return
+
+
+@app.cell
+def _(And, N, Or, Solver, is_true, mostra_estado, sat):
+    def constante_no_ciclo(estados, l, i, j):
+        # a célula (i, j) tem o mesmo valor em todos os estados do ciclo (de l até ao último)
+        iguais = []
+        for m in range(l, len(estados)):
+            iguais.append(estados[m][i][j] == estados[l][i][j])
+        return And(iguais)
+
+
+    def bmc_p2(declare, init, trans, K):
+        # tenta encontrar um laço com k = 1, 2, ..., K estados
+        for k in range(1, K + 1):
+            estados = [declare(i) for i in range(k)]
+
+            solver = Solver()
+            solver.add(init(estados[0]))                  # começa no estado inicial
+            for i in range(k - 1):
+                solver.add(trans(estados[i], estados[i + 1]))   # transições do traço
+
+            # para cada estado l para onde o último pode voltar:
+            opcoes = []
+            for l in range(k):
+                volta = trans(estados[-1], estados[l])     # o último estado volta ao estado l
+                celulas = []
+                for i in range(1, N + 1):
+                    for j in range(1, N + 1):
+                        celulas.append(constante_no_ciclo(estados, l, i, j))
+                # "volta ao estado l E alguma célula é constante no ciclo"
+                opcoes.append(And(volta, Or(celulas)))
+
+            # o solver escolhe o l e a célula
+            solver.add(Or(opcoes))
+
+            if solver.check() == sat:
+                m = solver.model()
+                print(f"Contra-exemplo encontrado com {k} estados:")
+                for e in range(k):
+                    print(f"Estado {e}:")
+                    print(mostra_estado(m, estados[e]))
+                    print()
+
+                # descobrir qual foi o l e a célula escolhidos pelo solver
+                for l in range(k):
+                    if is_true(m.eval(trans(estados[-1], estados[l]))):
+                        for i in range(1, N + 1):
+                            for j in range(1, N + 1):
+                                if is_true(m.eval(constante_no_ciclo(estados, l, i, j))):
+                                    valor = "viva" if is_true(m.eval(estados[l][i][j])) else "morta"
+                                    print(f"Laço: do estado {k-1} volta ao estado {l}")
+                                    print(f"A célula ({i},{j}) fica permanentemente {valor}")
+                                    return False
+                return False
+
+        print(f"Nenhum contra-exemplo encontrado com até {K} estados")
+        return True
+
+    return (bmc_p2,)
+
+
+@app.cell
+def _(SINCRONO, bmc_p2, declare, init, time, trans):
+    # verifica a P2 com BMC até _K estados e mede o tempo
+    _K = 10
+    _inicio = time.time()
+    _resultado = bmc_p2(declare, init, trans, _K)
+    print(f"Resultado: {_resultado}  (modo {'síncrono' if SINCRONO else 'assíncrono'})")
+    print(f"Tempo: {time.time() - _inicio:.2f} s")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - No síncrono, o contra-exemplo é inevitável. A execução é única e o sistema estabiliza mesmo no estado 5. A P2 falha por causa da dinâmica do jogo.
+
+    - No assíncrono, o contra-exemplo existe porque o solver pode escolher sempre células que não mudam, e nunca as que mudariam. As células do bloco “querem” mudar, mas nunca são escolhidas. A P2 falha por causa da liberdade de escolha da transição, e não da regra.
+    """)
     return
 
 

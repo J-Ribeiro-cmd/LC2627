@@ -331,6 +331,124 @@
           "mimetype": "text/plain"
         }
       ]
+    },
+    {
+      "id": "AMaZ",
+      "code_hash": "010aba4794c524b71b47de43a8d4fefc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"propriedade-p1-nunca-se-alcanca-o-estado-de-erro\">Propriedade P1 \u2014 nunca se alcan\u00e7a o estado de erro</h2>\n<span class=\"paragraph\">A propriedade \u00e9 um invariante (propriedade de <strong>seguran\u00e7a</strong>):</span>\n<marimo-tex class=\"arithmatex\">||[G\\,\\neg erro||]</marimo-tex><span class=\"paragraph\">Usamos <em>bounded model checking</em> como na ficha 7: para tamanhos\n<marimo-tex class=\"arithmatex\">||(k = 1, 2, \\dots, K||)</marimo-tex> procuramos um tra\u00e7o com <marimo-tex class=\"arithmatex\">||(k||)</marimo-tex> estados que comece no estado\ninicial, respeite a rela\u00e7\u00e3o de transi\u00e7\u00e3o e cujo \u00faltimo estado seja de erro.\nO primeiro tra\u00e7o encontrado \u00e9 um contra-exemplo <strong>m\u00ednimo</strong>. Se nenhum for\nencontrado, a propriedade \u00e9 v\u00e1lida nos primeiros <marimo-tex class=\"arithmatex\">||(K||)</marimo-tex> estados de execu\u00e7\u00e3o\n(o que n\u00e3o prova que seja v\u00e1lida sempre \u2014 para isso usaremos <em>k-indu\u00e7\u00e3o</em>).</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "UKyi",
+      "code_hash": "d82585af543a4d536005dab65b2de762",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ajWN",
+      "code_hash": "1bd95f680a8cfe7423f9f3e13b31ac92",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Nenhum contra-exemplo encontrado com at\u00e9 10 estados\nResultado: True  (modo s\u00edncrono)\nTempo: 6.03 s\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "Rscd",
+      "code_hash": "bf405718e66641335766b67b4d42459f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Resultados (N = 17, SEED = 42).</strong></span>\n<ul>\n<li><strong>S\u00edncrono:</strong> nenhum contra-exemplo at\u00e9 <marimo-tex class=\"arithmatex\">||(K = 10||)</marimo-tex> (\u22486 s). A transi\u00e7\u00e3o \u00e9\n  determinista, logo h\u00e1 uma \u00fanica execu\u00e7\u00e3o; o BMC n\u00e3o encontrou estados de erro\n  nos primeiros <marimo-tex class=\"arithmatex\">||(K||)</marimo-tex> estados. A prova \u00e9 feita com <em>k-indu\u00e7\u00e3o</em> (ver mais abaixo).</li>\n<li><strong>Ass\u00edncrono:</strong> contra-exemplo com 10 estados (\u2248121 s). O solver escolhe, em\n  cada passo, uma c\u00e9lula do bloco inicial que morre, nunca as que nasceriam junto\n  \u00e0 margem. Como o bloco tem 9 c\u00e9lulas e s\u00f3 muda uma por transi\u00e7\u00e3o, s\u00e3o precisos\n  pelo menos 9 passos: o contra-exemplo \u00e9 m\u00ednimo.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "gdmD",
+      "code_hash": "a1ebfebfb4cb6c8eb93e22d912194f2c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"propriedade-p2-nenhuma-celula-fica-permanentemente-morta-ou-viva\">Propriedade P2 \u2014 nenhuma c\u00e9lula fica permanentemente morta ou viva</h2>\n<span class=\"paragraph\">Para cada c\u00e9lula normal <marimo-tex class=\"arithmatex\">||(c||)</marimo-tex>, a propriedade exige que <marimo-tex class=\"arithmatex\">||(c||)</marimo-tex> volte sempre a estar\nviva e volte sempre a estar morta (propriedade de <strong>anima\u00e7\u00e3o</strong>):</span>\n<marimo-tex class=\"arithmatex\">||[\\bigwedge_{c}\\; \\big(G\\,F\\,c \\;\\wedge\\; G\\,F\\,\\neg c\\big)||]</marimo-tex><span class=\"paragraph\">Um contra-exemplo tem de ser uma execu\u00e7\u00e3o <strong>infinita</strong> em que alguma c\u00e9lula\nfica constante a partir de certo momento. Procuramos um\n<strong>la\u00e7o</strong>: um tra\u00e7o com <marimo-tex class=\"arithmatex\">||(k||)</marimo-tex> estados <marimo-tex class=\"arithmatex\">||(s_0, \\dots, s_{k-1}||)</marimo-tex>, que come\u00e7a no estado\ninicial, em que existe uma transi\u00e7\u00e3o de <marimo-tex class=\"arithmatex\">||(s_{k-1}||)</marimo-tex> para algum <marimo-tex class=\"arithmatex\">||(s_l||)</marimo-tex> (<marimo-tex class=\"arithmatex\">||(0 \\le l &lt; k||)</marimo-tex>),\ne em que existe uma c\u00e9lula com o mesmo valor em todos os estados do ciclo\n<marimo-tex class=\"arithmatex\">||(s_l, \\dots, s_{k-1}||)</marimo-tex>. Como o ciclo se repete indefinidamente, essa c\u00e9lula fica\ncom esse valor para sempre.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "IpDu",
+      "code_hash": "d0016f684fc827d3c8ca3bd5e88307a3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "CAZI",
+      "code_hash": "d8af68fdeeda8b56e250c2a2897aaa0b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Contra-exemplo encontrado com 6 estados:\nEstado 0:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n+ \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 1:\n- - + - - - - - + - - - - - - - + - - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . \u25a0 . . . . . . . . . . . . . - \n- . . \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 2:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 3:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . \u25a0 . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 4:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- \u25a0 . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 5:\n- - + - - - - - + - - - - - - - + - - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- \u25a0 . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nLa\u00e7o: do estado 5 volta ao estado 5\nA c\u00e9lula (1,1) fica permanentemente morta\nResultado: False  (modo s\u00edncrono)\nTempo: 5.86 s\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "xrPE",
+      "code_hash": "4f1426dedbd4fff23913361f6e4c1cb7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><ul>\n<li>No s\u00edncrono, o contra-exemplo \u00e9 inevit\u00e1vel. A execu\u00e7\u00e3o \u00e9 \u00fanica e o sistema estabiliza mesmo no estado 5. A P2 falha por causa da din\u00e2mica do jogo.</li>\n<li>No ass\u00edncrono, o contra-exemplo existe porque o solver pode escolher sempre c\u00e9lulas que n\u00e3o mudam, e nunca as que mudariam. As c\u00e9lulas do bloco \u201cquerem\u201d mudar, mas nunca s\u00e3o escolhidas. A P2 falha por causa da liberdade de escolha da transi\u00e7\u00e3o, e n\u00e3o da regra.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
     }
   ]
 }
