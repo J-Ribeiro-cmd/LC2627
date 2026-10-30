@@ -161,7 +161,7 @@ def _():
 
 @app.cell
 def _(cube, path):
-    # Exemplos de utilização de box, cube e path/ Gerado por LLM
+    # Exemplos de utilização de box, cube e path
 
     # box: uma célula fixa a 5 não perde o valor se for acrescentada outra vez sem valor
     _b = box()
@@ -286,7 +286,7 @@ def _(cp_model):
                     variaveis.append(self.x[(i,j)])
                     # se a célula tiver valor fixo, acrescenta ao modelo a restrição
                     if g.celulas[(i,j)] is not None:
-                        self.modelo.Add(self.x[(i,j)] == g.celulas[(i,j)])
+                        self.modelo.Add(self.x[(i,j)] == g.celulas[(i,j)]) #a variavel dessa célula, fica a valer esse valor
 
                 #acrescenta ao modelo a restrição "todos diferentes" sobre a lista
                 self.modelo.AddAllDifferent(variaveis)
@@ -307,7 +307,7 @@ def _(cp_model):
                     grelha.append(linha)
                 return grelha
 
-            # não há solução
+            # não há solução(quando são geradas pistas com o mesmo valor)
             else:
                 return None
 
@@ -368,10 +368,10 @@ def _(cube, path, pistas, sudoku):
 
 
     # R6: sorteia pistas até obter um puzzle com solução; devolve as pistas e a grelha
-    def gera_sudoku(k=None, n=3, tentativas=20):
+    def gera_sudoku(k=None, n=3, tentativas=20): #cada tentativa usa um modelo novo
         for t in range(tentativas):
             p = pistas(k, n)
-            grelha = resolve_sudoku(p, n)
+            grelha = resolve_sudoku(p, n) #se duas pistas iguas: recebe None e sortei novas pistas
 
             # encontrou um puzzle com solução
             if grelha is not None:

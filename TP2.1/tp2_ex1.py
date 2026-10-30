@@ -42,7 +42,20 @@ def _():
     import random
     import time
 
-    return And, Bool, BoolVal, If, Not, Or, Solver, Sum, mo, random
+    return (
+        And,
+        Bool,
+        BoolVal,
+        If,
+        Not,
+        Or,
+        Solver,
+        Sum,
+        is_true,
+        mo,
+        random,
+        sat,
+    )
 
 
 @app.cell(hide_code=True)
@@ -244,7 +257,7 @@ def _(And, If, Not, Or, Sum):
             numeros.append(If(v, 1, 0))
         return Sum(numeros)
 
-    def regra(s, i, j):
+    def regraB3_S23(s, i, j):
         viva = s[i][j]                    # a célula está viva agora?
         n = vizinhos_vivos(s, i, j)       # quantos vizinhos vivos tem?
 
@@ -253,11 +266,11 @@ def _(And, If, Not, Or, Sum):
 
         return Or(nasce, sobrevive)       # no próximo instante fica viva se nascer ou sobreviver
 
-    return regra, vizinhos_vivos
+    return regraB3_S23, vizinhos_vivos
 
 
 @app.cell
-def _(Solver, declare, init, regra, vizinhos_vivos):
+def _(Solver, declare, init, regraB3_S23, vizinhos_vivos):
     _s = declare(0)
     _solver = Solver()
     _solver.add(init(_s)) # exige que o estado _s seja o inicial, ou seja, quadrado 3×3 no canto, com 9 celulas vivas
@@ -268,8 +281,94 @@ def _(Solver, declare, init, regra, vizinhos_vivos):
         print((_i, _j),
               "| atual:", _m.eval(_s[_i][_j]),
               "| vizinhos vivos:", _m.eval(vizinhos_vivos(_s, _i, _j)),
-              "| próximo:", _m.eval(regra(_s, _i, _j)))
+              "| próximo:", _m.eval(regraB3_S23(_s, _i, _j)))
 
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Transição síncrona
+
+    Em cada transição **todas** as células normais transitam simultaneamente: o
+    valor de cada célula no estado seguinte $t$ é dado pela regra B3/S23 aplicada
+    ao estado atual $s$:
+
+    $$trans_{sinc}(s, t) \equiv \bigwedge_{i,j=1}^{N} \big(t_{i,j} = regra(s, i, j)\big)$$
+
+    Como cada célula tem um único valor seguinte possível, esta transição é
+    **determinista**: cada estado tem exatamente um sucessor.
+    """)
+    return
+
+
+@app.cell
+def _(And, N, regraB3_S23):
+    def trans_sincrono(s, t):
+        condicoes = []
+        for i in range(1, N + 1):
+            for j in range(1, N + 1):
+                # a célula (i,j) no estado seguinte tem o valor que a regra
+                # calcula a partir do estado atual
+                condicoes.append(t[i][j] == regraB3_S23(s, i, j))
+        return And(condicoes)
+
+    return (trans_sincrono,)
+
+
+@app.cell
+def _(N, borda, is_true):
+    def mostra_estado(m, s):
+        # desenha a grelha completa (N+2)x(N+2):
+        #   células normais:         ■ viva   . morta
+        #   células iniciais/finais: + viva   - morta
+        linhas = []
+        for i in range(N + 2):
+            linha = ""
+            for j in range(N + 2):
+                if borda[i][j] is None:
+                    # célula normal: o valor vem do modelo encontrado pelo solver
+                    if is_true(m.eval(s[i][j])):
+                        linha += "■ "
+                    else:
+                        linha += ". "
+                else:
+                    # célula inicial/final: o valor é a constante da borda
+                    if borda[i][j] == 1:
+                        linha += "+ "
+                    else:
+                        linha += "- "
+            linhas.append(linha)
+        return "\n".join(linhas)
+
+    return (mostra_estado,)
+
+
+@app.cell
+def _(Solver, declare, init, mostra_estado, sat, trans_sincrono):
+    # Teste: gera um traço de execução com _K estados, a partir do estado inicial,
+    # usando a transição síncrona
+
+    _K = 4   # número de estados do traço
+    _estados = [declare(k) for k in range(_K)] #criar k copias de estado com o declare
+
+    _solver = Solver()
+    _solver.add(init(_estados[0])) #o primeiro estado vai ser inicial
+
+    #liga os estados uns aos outros com transições, se há k estados existem k-1 ligações
+    for _k in range(_K - 1):
+        _solver.add(trans_sincrono(_estados[_k], _estados[_k + 1]))
+
+    #pede ao solver valores para todas as incógnitas que cumpram as condições acima
+    if _solver.check() == sat:
+        _m = _solver.model() #o modelo: valores encontrados
+        for _k in range(_K):
+            print(f"Estado {_k}:")
+            print(mostra_estado(_m, _estados[_k]))
+            print()
+    else:
+        print("Nenhum traço encontrado")
     return
 
 

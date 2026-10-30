@@ -1,0 +1,284 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.2",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "0913ffcd54ebe6e281a4348462628cfc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"trabalho-pratico-2-exercicio-1\">Trabalho Pr\u00e1tico 2 \u2014 Exerc\u00edcio 1</h1>\n<h2 id=\"game-of-life-como-maquina-de-estados-finita\"><em>Game of Life</em> como m\u00e1quina de estados finita</h2>\n<h3 id=\"problema\">Problema</h3>\n<span class=\"paragraph\">Modelar uma vers\u00e3o finita do <em>Game of Life</em> de Conway: uma grelha\n<marimo-tex class=\"arithmatex\">||(N \\times N||)</marimo-tex> (<marimo-tex class=\"arithmatex\">||(N &gt; 16||)</marimo-tex>) de c\u00e9lulas normais, rodeada por uma borda de c\u00e9lulas\nconstantes (aleat\u00f3rias em cima e \u00e0 esquerda, mortas em baixo e \u00e0 direita),\nque evolui segundo a regra <strong>B3/S23</strong>.</span>\n<span class=\"paragraph\">Pretende-se:</span>\n<ol>\n<li>construir uma <strong>FSM</strong> do aut\u00f3mato, com transi\u00e7\u00f5es <strong>s\u00edncronas</strong> (todas as\n   c\u00e9lulas mudam ao mesmo tempo) ou <strong>ass\u00edncronas</strong> (uma c\u00e9lula de cada vez);</li>\n<li>provar, ou obter contra-exemplos para:<ul>\n<li><strong>P1</strong> \u2014 nunca se alcan\u00e7a o estado de erro (todas as c\u00e9lulas mortas);</li>\n<li><strong>P2</strong> \u2014 nenhuma c\u00e9lula fica permanentemente morta ou viva.</li>\n</ul>\n</li>\n</ol>\n<h3 id=\"abordagem\">Abordagem</h3>\n<span class=\"paragraph\">O aut\u00f3mato \u00e9 modelado como um sistema de transi\u00e7\u00e3o (como os FOTS das aulas),\ncom o estado representado por vari\u00e1veis booleanas do <strong>Z3</strong> e os predicados\n<code>init</code> e <code>trans</code>. A P1 \u00e9 verificada com <em>bounded model checking</em> e\n<em>k-indu\u00e7\u00e3o</em>; a P2 com <em>bounded model checking</em> com ciclo (<em>lasso</em>).</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "44747d5d1e6dfc863f7a9bb2a1f68e5b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "ac5b702d20f1c375ff5c6b4d7dbd5ecc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"parametros\">Par\u00e2metros</h3>\n<ul>\n<li><code>N</code> \u2014 dimens\u00e3o da grelha de c\u00e9lulas normais (o enunciado exige <marimo-tex class=\"arithmatex\">||(N &gt; 16||)</marimo-tex>);</li>\n<li><code>SINCRONO</code> \u2014 escolhe a rela\u00e7\u00e3o de transi\u00e7\u00e3o, como pedido no enunciado:\n  <code>True</code> para a s\u00edncrona, <code>False</code> para a ass\u00edncrona;</li>\n<li><code>SEED</code> \u2014 semente do gerador aleat\u00f3rio usado nas c\u00e9lulas iniciais, para que\n  os resultados sejam <strong>reprodut\u00edveis</strong>.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "3ca39ca54feaf240b7806f8dd7432ff1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "rVuh",
+      "code_hash": "cd35f2e884c7a01b6269c8a6c0bba1c6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"celulas-iniciais-e-finais\">C\u00e9lulas iniciais e finais</h2>\n<span class=\"paragraph\">A grelha de c\u00e9lulas normais est\u00e1 rodeada por uma moldura de c\u00e9lulas com\nvalores constantes:</span>\n<ul>\n<li><strong>iniciais</strong> \u2014 um dos \u00edndices \u00e9 <marimo-tex class=\"arithmatex\">||(0||)</marimo-tex> (e nenhum \u00e9 <marimo-tex class=\"arithmatex\">||(N+1||)</marimo-tex>): <marimo-tex class=\"arithmatex\">||(2N+1||)</marimo-tex> c\u00e9lulas,\n  com valor sorteado com probabilidade <marimo-tex class=\"arithmatex\">||(1/2||)</marimo-tex>;</li>\n<li><strong>finais</strong> \u2014 as restantes com um \u00edndice igual a <marimo-tex class=\"arithmatex\">||(N+1||)</marimo-tex>: <marimo-tex class=\"arithmatex\">||(2N+3||)</marimo-tex> c\u00e9lulas,\n  sempre mortas.</li>\n</ul>\n<span class=\"paragraph\">Estes valores s\u00e3o guardados na matriz <code>borda</code>, de dimens\u00e3o <marimo-tex class=\"arithmatex\">||((N+2)\\times(N+2)||)</marimo-tex>,\nonde as posi\u00e7\u00f5es das c\u00e9lulas normais ficam a <code>None</code>. Como nunca mudam, s\u00e3o\nusados no <code>declare</code> como constantes e n\u00e3o como vari\u00e1veis do solver. A semente\n<code>SEED</code> garante que o sorteio \u00e9 sempre o mesmo.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nwYZ",
+      "code_hash": "3071673e659d0bcb2453b658ee82471e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "jZLQ",
+      "code_hash": "ccfe25c23dd52cd9b70e230c2eb172e9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "normais: 289  esperado: 289\nconstantes: 72  esperado: 72\n0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0\n1 . . . . . . . . . . . . . . . . . 0\n1 . . . . . . . . . . . . . . . . . 0\n0 . . . . . . . . . . . . . . . . . 0\n0 . . . . . . . . . . . . . . . . . 0\n1 . . . . . . . . . . . . . . . . . 0\n1 . . . . . . . . . . . . . . . . . 0\n1 . . . . . . . . . . . . . . . . . 0\n0 . . . . . . . . . . . . . . . . . 0\n0 . . . . . . . . . . . . . . . . . 0\n1 . . . . . . . . . . . . . . . . . 0\n0 . . . . . . . . . . . . . . . . . 0\n0 . . . . . . . . . . . . . . . . . 0\n1 . . . . . . . . . . . . . . . . . 0\n0 . . . . . . . . . . . . . . . . . 0\n1 . . . . . . . . . . . . . . . . . 0\n1 . . . . . . . . . . . . . . . . . 0\n1 . . . . . . . . . . . . . . . . . 0\n0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "46ec4e04a8f0fa9fdd095796dd116849",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"estado-celulas-normais\">Estado: c\u00e9lulas normais</h2>\n<span class=\"paragraph\">O estado do sistema \u00e9 formado pelas <marimo-tex class=\"arithmatex\">||(N^2||)</marimo-tex> c\u00e9lulas normais, cada uma\nrepresentada por uma vari\u00e1vel booleana do Z3 (viva = <code>True</code>, morta = <code>False</code>).</span>\n<span class=\"paragraph\">Tal como na ficha 7, para descrever uma execu\u00e7\u00e3o com v\u00e1rios passos precisamos\nde v\u00e1rias <strong>c\u00f3pias</strong> das vari\u00e1veis de estado: a fun\u00e7\u00e3o <code>declare(k)</code> cria a\n<marimo-tex class=\"arithmatex\">||(k||)</marimo-tex>-\u00e9sima c\u00f3pia. Cada c\u00f3pia \u00e9 uma matriz <marimo-tex class=\"arithmatex\">||((N+2)\\times(N+2)||)</marimo-tex>: nas posi\u00e7\u00f5es das\nc\u00e9lulas normais ficam vari\u00e1veis <code>Bool</code>; nas das c\u00e9lulas iniciais e finais\nficam as respetivas constantes <code>BoolVal</code>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "9d85416461f4c3457720cf5e50537896",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "6c37f76d53c68a28cb066ce64a807778",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"estado-inicial-e-estado-de-erro\">Estado inicial e estado de erro</h2>\n<ul>\n<li><strong>Estado inicial</strong> \u2014 todas as c\u00e9lulas normais est\u00e3o mortas, exceto as que\n  t\u00eam <marimo-tex class=\"arithmatex\">||(i,j \\le 3||)</marimo-tex>, que est\u00e3o vivas.</li>\n<li><strong>Estado de erro</strong> \u2014 todas as c\u00e9lulas normais est\u00e3o mortas.</li>\n</ul>\n<span class=\"paragraph\">Ambos s\u00e3o definidos como predicados sobre um estado <marimo-tex class=\"arithmatex\">||(s||)</marimo-tex>, que devolvem uma\nf\u00f3rmula do Z3, tal como o <code>init</code> da ficha 7:</span>\n<marimo-tex class=\"arithmatex\">||[init(s) \\equiv \\bigwedge_{i,j \\le 3} s_{i,j} \\;\\wedge \\bigwedge_{\\text{restantes}} \\neg s_{i,j}\n\\qquad\\qquad\nerro(s) \\equiv \\neg \\bigvee_{i,j=1}^{N} s_{i,j}||]</marimo-tex></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "5357979267a4245d7450c668ae343ab1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BGBe",
+      "code_hash": "0d8365facd3af427934fd569683db0ed",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "init \u00e9 satisfaz\u00edvel: sat\ninit \u2227 erro: unsat\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "uMRz",
+      "code_hash": "b43ec09261da8a871f8df27c1c18c036",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"vizinhos-e-regra-b3s23\">Vizinhos e regra B3/S23</h2>\n<span class=\"paragraph\">Duas c\u00e9lulas s\u00e3o vizinhas sse <marimo-tex class=\"arithmatex\">||(\\max(|i_0-i_1|, |j_0-j_1|) = 1||)</marimo-tex>, ou seja, cada\nc\u00e9lula tem 8 vizinhos (incluindo as diagonais). Gra\u00e7as \u00e0s c\u00e9lulas iniciais e\nfinais, todas as c\u00e9lulas normais t\u00eam os 8 vizinhos dentro da matriz.</span>\n<span class=\"paragraph\">A regra <strong>B3/S23</strong> define o pr\u00f3ximo valor de uma c\u00e9lula <marimo-tex class=\"arithmatex\">||(c||)</marimo-tex> com <marimo-tex class=\"arithmatex\">||(n||)</marimo-tex> vizinhos vivos:</span>\n<ul>\n<li><strong>nasce</strong> se est\u00e1 morta e <marimo-tex class=\"arithmatex\">||(n = 3||)</marimo-tex>;</li>\n<li><strong>sobrevive</strong> se est\u00e1 viva e <marimo-tex class=\"arithmatex\">||(n \\in \\{2, 3\\}||)</marimo-tex>;</li>\n<li>caso contr\u00e1rio fica (ou passa a) morta.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Qblq",
+      "code_hash": "ad6291ecdd7106603f87cd9cd441d43d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZJka",
+      "code_hash": "587050c0546b11e0efcf1cb9e77c36d7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "(2, 2) | atual: True | vizinhos vivos: 8 | pr\u00f3ximo: False\n(3, 3) | atual: True | vizinhos vivos: 3 | pr\u00f3ximo: True\n(4, 2) | atual: False | vizinhos vivos: 3 | pr\u00f3ximo: True\n(2, 4) | atual: False | vizinhos vivos: 3 | pr\u00f3ximo: True\n(10, 10) | atual: False | vizinhos vivos: 0 | pr\u00f3ximo: False\n(1, 5) | atual: False | vizinhos vivos: 0 | pr\u00f3ximo: False\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "tsmi",
+      "code_hash": "ccf3a559812d9aed5e95ef81b18fc74c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"transicao-sincrona\">Transi\u00e7\u00e3o s\u00edncrona</h2>\n<span class=\"paragraph\">Em cada transi\u00e7\u00e3o <strong>todas</strong> as c\u00e9lulas normais transitam simultaneamente: o\nvalor de cada c\u00e9lula no estado seguinte <marimo-tex class=\"arithmatex\">||(t||)</marimo-tex> \u00e9 dado pela regra B3/S23 aplicada\nao estado atual <marimo-tex class=\"arithmatex\">||(s||)</marimo-tex>:</span>\n<marimo-tex class=\"arithmatex\">||[trans_{sinc}(s, t) \\equiv \\bigwedge_{i,j=1}^{N} \\big(t_{i,j} = regra(s, i, j)\\big)||]</marimo-tex><span class=\"paragraph\">Como cada c\u00e9lula tem um \u00fanico valor seguinte poss\u00edvel, esta transi\u00e7\u00e3o \u00e9\n<strong>determinista</strong>: cada estado tem exatamente um sucessor.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "oVOE",
+      "code_hash": "60af8397778513b6a83228d67778cee1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BBCR",
+      "code_hash": "99ea1ad79f513eea752e7eef9cdb2ca3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "qYKp",
+      "code_hash": "b01b79ea19c18b321a3866f0eb0c3777",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Estado 0:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n+ \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 1:\n- - + - - - - - + - - - - - - - + - - \n+ . . . . . . . . . . . . . . . . . - \n+ . . . \u25a0 . . . . . . . . . . . . . - \n- . . \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 2:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 \u25a0 . . . . . . . . . . . . . . - \n- \u25a0 \u25a0 . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\nEstado 3:\n- - + - - - - - + - - - - - - - + - - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . \u25a0 . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n- . . . . . . . . . . . . . . . . . - \n+ . . . . . . . . . . . . . . . . . - \n- \u25a0 . . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n+ . \u25a0 . . . . . . . . . . . . . . . - \n+ \u25a0 . . . . . . . . . . . . . . . . - \n- - - - - - - - - - - - - - - - - - - \n\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    }
+  ]
+}

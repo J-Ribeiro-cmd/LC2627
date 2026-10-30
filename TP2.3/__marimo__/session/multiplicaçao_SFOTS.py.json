@@ -1,68 +1,33 @@
 {
   "version": "1",
   "metadata": {
-    "marimo_version": "0.25.0",
+    "marimo_version": "0.24.2",
     "script_metadata_hash": null
   },
   "cells": [
     {
       "id": "Hbol",
       "code_hash": "54a835e80ca535cbc2b6c2bd8dcb1f8e",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
+      "outputs": [],
       "console": []
     },
     {
       "id": "MJUe",
-      "code_hash": "e795dec34c297ad150559fdddd483753",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": []
-    },
-    {
-      "id": "ApgS",
-      "code_hash": "335aec19087e51f3a644eefb1f9d213e",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
+      "code_hash": "c4d645bd41c46d463af349ea2a23ef88",
+      "outputs": [],
       "console": []
     },
     {
       "id": "vblA",
+      "code_hash": "c8dae112ac1b4fadc670848504c8491e",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "bkHC",
       "code_hash": "668370177e26273c695f8441d5f7c2b8",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stdout",
-          "text": "Estado 0: pc = init, x = x0, y = y0, z = z0, a = 3, b = 5\nEstado 1: pc = skip, x = 3, y = 5, z = 0, a = 3, b = 5\nEstado 2: pc = right, x = 3, y = 5, z = 0, a = 3, b = 5\nEstado 3: pc = skip, x = 3, y = 4, z = 3, a = 3, b = 5\nEstado 4: pc = left, x = 3, y = 4, z = 3, a = 3, b = 5\nEstado 5: pc = skip, x = 6, y = 2, z = 3, a = 3, b = 5\nEstado 6: pc = left, x = 6, y = 2, z = 3, a = 3, b = 5\nEstado 7: pc = skip, x = 12, y = 1, z = 3, a = 3, b = 5\nEstado 8: pc = right, x = 12, y = 1, z = 3, a = 3, b = 5\nEstado 9: pc = skip, x = 12, y = 0, z = 15, a = 3, b = 5\nEstado 10: pc = stop, x = 12, y = 0, z = 15, a = 3, b = 5\nEstado 11: pc = stop, x = 12, y = 0, z = 15, a = 3, b = 5\n\n15 x 15:\nEstado 0: pc = init, x = x0, y = y0, z = z0, a = 15, b = 15\nEstado 1: pc = skip, x = 15, y = 15, z = 0, a = 15, b = 15\nEstado 2: pc = right, x = 15, y = 15, z = 0, a = 15, b = 15\nEstado 3: pc = skip, x = 15, y = 14, z = 15, a = 15, b = 15\nEstado 4: pc = left, x = 15, y = 14, z = 15, a = 15, b = 15\nEstado 5: pc = error, x = 15, y = 14, z = 15, a = 15, b = 15\nEstado 6: pc = error, x = 15, y = 14, z = 15, a = 15, b = 15\nEstado 7: pc = error, x = 15, y = 14, z = 15, a = 15, b = 15\n",
-          "mimetype": "text/plain"
-        }
-      ]
+      "outputs": [],
+      "console": []
     }
   ]
 }
